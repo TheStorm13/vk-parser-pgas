@@ -4,21 +4,33 @@ import re
 class AuthorValidator:
     def __init__(self, fio):
         # Разбиваем ФИО на части
-        surname, name, patronymic = fio.split()
+        self.fio = fio
 
-        # Создаем регулярное выражение с учетом ФИО
-        self.author_pattern = re.compile(
-            rf"Текст:\s*{surname}\s*{name[0]}(\.\s*{patronymic[0]}\.?|{name[1:]})?|"
-            rf"Текст:\s*{name[0]}(\.\s*{patronymic[0]}\.?|{name[1:]})?\s*{surname}",
+    def create_pattern(fio):
+        surname, name, _ = fio.split()
+
+        # Префиксы: Автор или Текст, разделенные пробелами
+        prefix = r"(Автор|Текст)\s*:?\s*"
+
+        # Формат имени (инициалы или полное имя)
+        name_variations = rf"{name[0]}\.?|{name}"
+
+        # Фамилия или имя в различных вариантах
+        name_and_surname = rf"({surname}\s*{name_variations}|{name_variations}\s*{surname})"
+
+        # Финальное регулярное выражение
+        return re.compile(
+            rf"{prefix}{name_and_surname}",
             re.IGNORECASE
         )
 
     def check_author(self, text):
-        return self.author_pattern.search(text['text'])
+        pattern = self.create_pattern(self.fio)
+        return pattern.search(text)
 
     def validate_author(self, post):
         # Проверяем текст поста
-        if self.check_author(post):
+        if self.check_author(post['text']):
             return True
 
         # Получаем комментарии к посту
@@ -26,7 +38,7 @@ class AuthorValidator:
             comments = post['comments']['items']
             for comment in comments:
                 # Проверяем текст комментария
-                if self.check_author(comment):
+                if self.check_author(comment['text']):
                     return True
 
         return False

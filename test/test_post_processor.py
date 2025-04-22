@@ -1,40 +1,59 @@
 import re
+import pytest
 
-# Ваше ФИО
-fio = "Гроза Илья Валерьевич"
+# Регулярное выражение на основе ФИО
+def create_pattern_v1(fio):
+    surname, name, patronymic = fio.split()
+    return re.compile(
+        rf"Текст:\s*{surname}\s*{name[0]}(\.\s*{patronymic[0]}\.?|{name[1:]})?|"
+        rf"Текст:\s*{name[0]}(\.\s*{patronymic[0]}\.?|{name[1:]})?\s*{surname}",
+        re.IGNORECASE
+    )
 
-# Разбиваем ФИО на части
-surname, name, patronymic = fio.split()
+def create_pattern_v2(fio):
+    surname, name, _ = fio.split()
 
-# Создаем регулярное выражение с учетом ФИО
-pattern = re.compile(
-    rf"Текст:\s*{surname}\s*{name[0]}(\.\s*{patronymic[0]}\.?|{name[1:]})?|"
-    rf"Текст:\s*{name[0]}(\.\s*{patronymic[0]}\.?|{name[1:]})?\s*{surname}",
-    re.IGNORECASE
-)
+    # Префиксы: Автор или Текст, разделенные пробелами
+    prefix = r"(Автор|Текст)\s*:?\s*"
 
-# Пример использования
-texts = [
-    "Текст: Гроза И. В.",
-    "Текст: Гроза Илья",
-    "Текст: И. В. Гроза",
-    "Текст: Илья Гроза",
-    "Текст: Гроза И. Валерьевич",
-    "Текст: Гроза И В",
-    "Текст: Гроза И",
-    "Текст: И Гроза",
-    "Текст: Гроза И.В.",
-    "Текст: И.В. Гроза",
-    "Текст: Гроза И.    В.",
-    "Текст:Гроза  И. В.",
-    "Текст:   Гроза И    В.",
-    "Текст:  Илья  Гроза  ",
-    "Текст: И. В.   Гроза",
-    "Текст: Неправильный Текст"
-]
+    # Формат имени (инициалы или полное имя)
+    name_variations = rf"{name[0]}\.?|{name}"
 
-for text in texts:
-    if pattern.search(text):
-        print(f"Найдено совпадение: {text}")
-    else:
-        print(f"Совпадение не найдено: {text}")
+    # Фамилия или имя в различных вариантах
+    name_and_surname = rf"({surname}\s*{name_variations}|{name_variations}\s*{surname})"
+
+    # Финальное регулярное выражение
+    return re.compile(
+        rf"{prefix}{name_and_surname}",
+        re.IGNORECASE
+    )
+
+
+
+# Тестовые данные
+@pytest.mark.parametrize("text, expected", [
+    ("Текст: Гроза И. В.", True),
+    ("Текст: Гроза Илья", True),
+    ("Текст: И. В. Гроза", True),
+    ("Текст: Илья Гроза", True),
+    ("Текст: Гроза И. Валерьевич", True),
+    ("Текст: Гроза И В", True),
+    ("Текст: Гроза И", True),
+    ("Текст: И Гроза", True),
+    ("Текст: Гроза И.В.", True),
+    ("Текст: И.В. Гроза", True),
+    ("Текст: Гроза И.    В.", True),
+    ("Текст:Гроза  И. В.", True),
+    ("Текст:   Гроза И    В.", True),
+    ("Текст:  Илья  Гроза  ", True),
+    ("Текст: И. В.   Гроза", True),
+    ("Текст: Неправильный Текст", False),
+])
+def test_pattern_matching(text, expected):
+    fio = "Гроза Илья Валерьевич"
+
+    pattern = create_pattern_v1(fio)
+    assert (pattern.search(text) is not None) == expected
+
+    pattern = create_pattern_v2(fio)
+    assert (pattern.search(text) is not None) == expected
