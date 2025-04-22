@@ -1,34 +1,44 @@
-from .post_processor import PostProcessor
+from collections import defaultdict
+
+from src.model.post import Post
+from src.model.post_category import PostCategory
 
 
 class PostCategorizer:
     def __init__(self):
         self.categories = {
-            "Пост (менее 400 знаков)": [],
-            "Пост (от 400 до 1200 знаков)": [],
-            "Пост (от 1200 до 2500 знаков)": [],
-            "Пост (свыше 2500 знаков)": [],
+            PostCategory(0, 400, 6, 8),
+            PostCategory(400, 1200, 4, 6),
+            PostCategory(1200, 2500, 2, 2),
+            PostCategory(2500, None, 1, 1)
+
         }
 
-    def categorize_posts(self, posts, fio):
+    def categorize_post(self, len_text: int) -> PostCategory:
         """
-        Группирует посты по количеству символов и сортирует их по дате.
+        Классифицирует пост в категорию на основе его длины текста.
+        :param post: Объект поста
+        :return: Объект поста с обновленной категорией
         """
-        post_processor = PostProcessor(fio)
-
-        for post in posts:
-            text_length = post_processor.count_chars_before_pattern(post['text'])
-            if text_length < 400:
-                self.categories["Пост (менее 400 знаков)"].append(post)
-            elif 400 <= text_length < 1200:
-                self.categories["Пост (от 400 до 1200 знаков)"].append(post)
-            elif 1200 <= text_length < 2500:
-                self.categories["Пост (от 1200 до 2500 знаков)"].append(post)
-            else:
-                self.categories["Пост (свыше 2500 знаков)"].append(post)
-
-        # Сортируем посты в каждой категории по дате
         for category in self.categories:
-            self.categories[category].sort(key=lambda x: x['date'])
+            if category.max_length is None:  # Для категории без верхнего предела длины
+                if len_text >= category.min_length:
+                    return category
+            elif category.min_length < len_text <= category.max_length:
+                return category
+        return None
 
-        return self.categories
+    @staticmethod
+    def categorize_posts(posts: list[Post]):
+        categorized_posts = defaultdict(list)
+        for post in posts:
+            categorized_posts[post.category].append(post)
+
+        return categorized_posts
+
+    @staticmethod
+    def calculate_points(category: PostCategory, count_post: int) -> int:
+        first_part = (count_post // category.max_value)
+        second_part = (count_post % category.max_value) // category.min_value
+
+        return first_part + second_part
