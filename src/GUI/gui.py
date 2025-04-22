@@ -96,7 +96,7 @@ class ModernApp(ThemedTk):
 1. posts.txt  
 В этом файле содержится информация о категориях и список всех постов.  
                     
-2. for_word_file.txt
+2. for_word_file.md
 Этот файл содержит информацию для удобного копирования в таблицу Word. 
 Просто скопируйте данные для каждой категории в соответствующий столбец.  
                     
@@ -153,6 +153,10 @@ class ModernApp(ThemedTk):
         start_date = self.entry_start_date.get()
         end_date = self.entry_end_date.get()
         full_name = self.entry_full_name.get()
+
+        # start_date = "01.09.2024"
+        # end_date = "01.10.2024"
+        # full_name = "Гроза Илья Валерьевич"
 
         # Проверяем формат даты
         try:
