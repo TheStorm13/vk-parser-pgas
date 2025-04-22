@@ -1,0 +1,2 @@
+VK_TOKEN = "ec73ec25ec73ec25ec73ec25cdef54b653eec73ec73ec258bf19b1e94dedb6e5c2d8849"
+VK_GROUP = "svarog_samara"
