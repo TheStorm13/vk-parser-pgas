@@ -1,2 +1,1 @@
-from .post_categorizer import PostCategorizer
-from .post_processor import PostProcessor
+from src.post_processing.post_categorizer import PostCategorizer
