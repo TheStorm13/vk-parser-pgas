@@ -1,6 +1,6 @@
 # main.py
-from src.GUI.gui import ModernApp
+from src.GUI.modern_gui import ModernGui
 
 if __name__ == "__main__":
-    app = ModernApp()
+    app = ModernGui()
     app.mainloop()

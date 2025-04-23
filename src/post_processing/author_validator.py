@@ -6,7 +6,9 @@ class AuthorValidator:
         # Разбиваем ФИО на части
         self.fio = fio
 
+    @staticmethod
     def create_pattern(fio):
+        # todo: добавить логирование и типизацию
         surname, name, _ = fio.split()
 
         # Префиксы: Автор или Текст, разделенные пробелами
@@ -25,10 +27,13 @@ class AuthorValidator:
         )
 
     def check_author(self, text):
-        pattern = self.create_pattern(self.fio)
+        # todo: добавить логирование и типизацию
+        pattern = AuthorValidator.create_pattern(self.fio)
         return pattern.search(text)
 
     def validate_author(self, post):
+        # todo: добавить логирование и типизацию
+
         # Проверяем текст поста
         if self.check_author(post['text']):
             return True
