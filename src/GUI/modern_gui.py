@@ -10,8 +10,7 @@ class ModernGui(ThemedTk):
     def __init__(self):
         super().__init__()
         self.title("Сбор постов для ПГАС")
-        self.geometry("1000x800")
-        self.center_window()
+        self.geometry("500x600")
         # todo: проверить соверменную тему
         self.set_theme("arc")  # Используем современную тему
 
@@ -33,23 +32,6 @@ class ModernGui(ThemedTk):
 
         # Configure grid weights for resizing
         self.main_frame.columnconfigure(1, weight=1)
-
-    def center_window(self):
-        """
-        Центрирует окно на экране.
-        """
-        self.update_idletasks()  # Обновляем информацию о размерах окна
-        width = self.winfo_width()  # Ширина окна
-        height = self.winfo_height()  # Высота окна
-        screen_width = self.winfo_screenwidth()  # Ширина экрана
-        screen_height = self.winfo_screenheight()  # Высота экрана
-
-        # Вычисляем координаты для центрирования окна
-        x = (screen_width // 2) - (width // 2)
-        y = (screen_height // 2) - (height // 2)
-
-        # Устанавливаем положение окна
-        self.geometry(f"+{x}+{y}")
 
 
 if __name__ == "__main__":
