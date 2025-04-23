@@ -1,9 +1,9 @@
 import time
 
 from config import VK_TOKEN, VK_GROUP
-from src.api_handlers.vk_api_handler import VKAPIHandler
-from src.post_processing.post_analyzer import PostAnalyzer
-from src.report.report_builder import ReportBuilder
+from src.logic.api_handlers.vk_api_handler import VKAPIHandler
+from src.logic.post_processing.post_analyzer import PostAnalyzer
+from src.report.report_creator import ReportCreator
 
 
 class MainLogic:
@@ -17,7 +17,7 @@ class MainLogic:
             # Инициализация классов
             vk_handler = VKAPIHandler(VK_TOKEN)
             post_analyzer = PostAnalyzer(fio)
-            report_builder = ReportBuilder()
+            report_creator = ReportCreator()
 
             # Получаем ID группы
             group_id = vk_handler.get_group_id(group_name)
@@ -32,10 +32,7 @@ class MainLogic:
             filtered_posts = post_analyzer.posts_analyze(posts)
             print("Время на Обработку постов: ", time.time() - start_time)
 
-            for post in filtered_posts:
-                print(post.__str__())
-
-            report_builder.report_builder(filtered_posts)
+            report_creator.generate_reports(filtered_posts, "result")
 
         except Exception as e:
             print(f"Произошла ошибка: {e}")
