@@ -1,5 +1,9 @@
 import re
 
+from src.logger.logger import setup_logger
+
+logger = setup_logger(__name__)
+
 
 class AuthorValidator:
     def __init__(self, fio):
@@ -7,8 +11,7 @@ class AuthorValidator:
         self.fio = fio
 
     @staticmethod
-    def create_pattern(fio):
-        # todo: добавить логирование и типизацию
+    def create_pattern(fio: str) -> re.Pattern:
         surname, name, _ = fio.split()
 
         # Префиксы: Автор или Текст, разделенные пробелами
@@ -26,16 +29,16 @@ class AuthorValidator:
             re.IGNORECASE
         )
 
-    def check_author(self, text):
-        # todo: добавить логирование и типизацию
+    def check_author(self, text: str):
         pattern = AuthorValidator.create_pattern(self.fio)
-        return pattern.search(text)
+        result = pattern.search(text)
 
-    def validate_author(self, post):
-        # todo: добавить логирование и типизацию
+        return result
 
+    def validate_author(self, post) -> bool:
         # Проверяем текст поста
         if self.check_author(post['text']):
+            logger.debug("The author is indicated in the text of the post")
             return True
 
         # Получаем комментарии к посту
@@ -44,6 +47,8 @@ class AuthorValidator:
             for comment in comments:
                 # Проверяем текст комментария
                 if self.check_author(comment['text']):
-                    return True
+                    logger.debug("The author is indicated in the comments of the post")
+                return True
 
+        logger.debug("The author is not discovered at the post")
         return False

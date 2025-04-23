@@ -4,12 +4,14 @@ from datetime import datetime
 class DataUtils:
     @staticmethod
     def convert_date(timestamp) -> datetime:
+        # todo: добавить логирование и типизацию
         """
         Форматирует дату в формате DD.MM.YYYY.
         """
         return datetime.fromtimestamp(timestamp)
 
-    def format_date(data):
+    def format_date(data: datetime) -> str:
+        # todo: добавить логирование и типизацию
         """
         Форматирует дату в формате DD.MM.YYYY.
         """
