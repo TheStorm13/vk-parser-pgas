@@ -3,6 +3,10 @@ from tkinter import ttk
 
 
 class Styles:
+    # Цвета
+    SELECTION_BG = "#0078D7"  # Цвет фона выделения (синий)
+    SELECTION_FG = "white"  # Цвет текста при выделении
+
     @staticmethod
     def configure_styles(root):
         """
@@ -17,6 +21,19 @@ class Styles:
         style.configure("TLabel", background="white", font=("Helvetica", 12))
         style.configure("TButton", font=("Helvetica", 12, "bold"))
         style.map("Accent.TButton", focus=[("focus", "!focus", "")])
+
+        style.map('Custom.TEntry',
+                  selectbackground=[('!focus', Styles.SELECTION_BG),
+                                    ('focus', Styles.SELECTION_BG)],
+                  selectforeground=[('!focus', Styles.SELECTION_FG),
+                                    ('focus', Styles.SELECTION_FG)])
+
+        return style
+
+    @staticmethod
+    def get_color_selection():
+        # Настройка стиля для Entry с синим выделением
+        style = ttk.Style()
 
         return style
 
