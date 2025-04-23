@@ -9,6 +9,7 @@ class VKAPIHandler:
         self.vk = self.vk_session.get_api()
 
     def get_group_id(self, group_url):
+        # todo: добавить логирование и типизацию
         """
         Получает ID группы по её короткому имени.
         """
@@ -18,6 +19,7 @@ class VKAPIHandler:
         return -group_info['object_id']
 
     def get_posts(self, owner_id, start_date, end_date, update_progress=None):
+        # todo: добавить логирование и типизацию
         """
         Получает посты из группы за указанный период.
         """

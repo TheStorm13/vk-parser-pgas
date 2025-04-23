@@ -19,6 +19,7 @@ class TextUtils:
 
     @staticmethod
     def get_post_link(owner_id, post_id):
+        # todo: добавить логирование и типизацию
         """
         Формирует ссылку на пост.
         """
@@ -26,6 +27,7 @@ class TextUtils:
 
     @staticmethod
     def remove_emoji(text: str, EMOJI_PATTERN=EMOJI_PATTERN):
+        # todo: добавить логирование и типизацию
         """
         Удаляет emoji из текста.
         """
@@ -33,6 +35,7 @@ class TextUtils:
 
     @staticmethod
     def extract_title(post_text: str):
+        # todo: добавить логирование и типизацию
         """
         Извлекает название из шапки поста (первая строка текста) и удаляет emoji.
         """
@@ -44,6 +47,7 @@ class TextUtils:
 
     @staticmethod
     def count_chars_before_pattern(post_text: str):
+        # todo: добавить логирование и типизацию
         """
         Считает количество символов до первого вхождения # или до конца текста, если # отсутствует.
         :param text: Текст поста.
