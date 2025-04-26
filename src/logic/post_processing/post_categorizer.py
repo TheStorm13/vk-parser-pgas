@@ -11,7 +11,7 @@ class PostCategorizer:
     def __init__(self):
         # Define post categories with specific length ranges and values
         self.categories = {
-            PostCategory(0, 400, 6, 8),
+            PostCategory(0, 400, 8, 10),
             PostCategory(400, 1200, 4, 6),
             PostCategory(1200, 2500, 2, 2),
             PostCategory(2500, float('inf'), 1, 1)
