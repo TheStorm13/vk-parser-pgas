@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class DateUtils:
@@ -6,6 +6,11 @@ class DateUtils:
     def timestamp_to_datetime(timestamp) -> datetime:
         """Convert a UNIX timestamp to a datetime object."""
         return datetime.fromtimestamp(timestamp)
+
+    @staticmethod
+    def datetime_to_timestamp(date: datetime) -> float:
+        """Convert a datetime object to a UNIX timestamp."""
+        return date.timestamp()
 
     @staticmethod
     def datetime_to_string(data: datetime) -> str:
@@ -25,3 +30,16 @@ class DateUtils:
             return start_dt, end_dt
         except ValueError:
             return None  # Return None for invalid date format inputs
+
+    @staticmethod
+    def get_current_date() -> datetime:
+        return datetime.now()
+
+    @staticmethod
+    def get_days_before_date(days: int, date: datetime) -> datetime:
+        future_datetime = date - timedelta(days=days)
+        return future_datetime
+
+    @staticmethod
+    def timestamp_to_str(date: float) -> str:
+        return datetime.fromtimestamp(date).strftime('%d.%m.%Y')
