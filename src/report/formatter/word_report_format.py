@@ -1,6 +1,6 @@
 from src.model.post import Post
 from src.report.formatter.interface.report_format import ReportFormat
-from src.utils.data_utils import DataUtils
+from src.utils.data_utils import DateUtils
 
 
 class WordReportFormat(ReportFormat):
@@ -13,29 +13,23 @@ class WordReportFormat(ReportFormat):
                f"Количество баллов: {category_point}\n"
 
     def format_post(self, post: Post) -> dict:
-        """
-        Формирует словарь с названием, отформатированной датой и ссылкой поста.
-        Они будут группироваться отдельно для каждой категории.
-        """
+        # Converts a Post object into a dictionary
         return {
             "title": f"Пост «{post.title}»",
-            "date": DataUtils.format_date(post.date),
+            "date": DateUtils.datetime_to_string(post.date),
             "link": post.url
         }
 
     def format_category_posts(self, posts: list[Post]) -> str:
-        """
-        Формирует сначала список постов, затем список дат и другие данные.
-        """
-        # Сначала извлекаем отформатированные данные
+        # Extract individual parts of the post information
         post_titles = [f"Пост «{post.title}»" for post in posts]
-        post_dates = [f"{DataUtils.format_date(post.date)}" for post in posts]
+        post_dates = [f"{DateUtils.datetime_to_string(post.date)}" for post in posts]
         post_links = [f"{post.url}" for post in posts]
 
-        # Формируем строки для вывода
+        # Combines the extracted parts into readable sections
         posts_section = "\nПосты:\n" + "\n".join(post_titles)
         dates_section = "Даты:\n" + "\n".join(post_dates)
         links_section = "Ссылки:\n" + "\n".join(post_links) + "\n"
 
-        # Совмещаем все секции
+        # Returns the complete formatted section for the category
         return f"{posts_section}\n\n{dates_section}\n\n{links_section}"

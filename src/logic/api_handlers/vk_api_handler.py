@@ -7,6 +7,7 @@ logger = setup_logger(__name__)
 
 class VKAPIHandler:
     def __init__(self, token):
+        # Initiate VK API session
         self.vk_session = vk_api.VkApi(token=token)
         self.vk = self.vk_session.get_api()
 
@@ -28,6 +29,7 @@ class VKAPIHandler:
 
         while True:
             try:
+                # Fetch posts from the VK wall
                 response = self.vk.wall.get(owner_id=owner_id,
                                             count=count,
                                             offset=offset)
@@ -39,12 +41,15 @@ class VKAPIHandler:
                 total_posts += len(posts)
                 offset += count
 
+                # Dates of the first and last posts
                 first_date = posts[0]['date']
                 last_date = posts[-1]['date']
 
+                # Skip posts older than the end_date
                 if last_date > end_date:
                     continue
 
+                # Stop fetching if posts are before the start_date
                 if first_date < start_date:
                     break
 

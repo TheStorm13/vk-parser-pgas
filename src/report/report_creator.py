@@ -10,13 +10,15 @@ from src.report.report_writer import ReportWriter
 
 class ReportCreator:
     def generate_reports(self, posts: dict[PostCategory, list[Post]], output_path: str = PATH_REPORT):
+        # Initialize ReportWriter for managing file output
         writer = ReportWriter(output_path)
 
+        # Iterate through each report format and generate the corresponding report
         for format_name, report_format in {
-            "posts.txt": TextReportFormat(),
-            "posts.md": MarkdownReportFormat(),
-            "posts_word.txt": WordReportFormat(),
+            "posts.txt": TextReportFormat(),  # Plain text format
+            "posts.md": MarkdownReportFormat(),  # Markdown format
+            "posts_word.txt": WordReportFormat(),  # Custom word-like format
         }.items():
-            builder = ReportBuilder(report_format)
-            content = builder.build_report(posts)
-            writer.write_report(format_name, content)
+            builder = ReportBuilder(report_format)  # Configure the report builder with the format
+            content = builder.build_report(posts)  # Generate the report content
+            writer.write_report(format_name, content)  # Write the generated report to a file

@@ -1,6 +1,6 @@
 from src.model.post import Post
 from src.report.formatter.interface.report_format import ReportFormat
-from src.utils.data_utils import DataUtils
+from src.utils.data_utils import DateUtils
 
 
 class MarkdownReportFormat(ReportFormat):
@@ -14,8 +14,8 @@ class MarkdownReportFormat(ReportFormat):
                "\n| Название | Длина | Дата | Ссылка |\n|------|------|------|------|\n"
 
     def format_post(self, post: Post) -> str:
-        title = post.title.replace("|", r"\|")  # Экранируем Markdown символ
-        post_date = DataUtils.format_date(post.date)
+        title = post.title.replace("|", r"\|")  # Shintage Markdown Symbol
+        post_date = DateUtils.datetime_to_string(post.date)
         return f"| {title} | {post.len_text} | {post_date} | [{post.url}]({post.url}) |\n"
 
     def format_category_posts(self, posts: list[Post]) -> str:

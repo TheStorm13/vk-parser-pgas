@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from src.model.post_category import PostCategory
-from src.utils.data_utils import DataUtils
+from src.utils.data_utils import DateUtils
 
 
 class Post:
@@ -22,6 +22,5 @@ class Post:
         self.category = category
 
     def __str__(self):
-        # Возвращаем строковое представление поста, включающее его основные атрибуты
-        return (f"Post(title='{self.title}', date={DataUtils.format_date(self.date)}"
+        return (f"Post(title='{self.title}', date={DateUtils.datetime_to_string(self.date)}"
                 f"url='{self.url}', category='{self.category.__str__()}', text_length={self.len_text})")

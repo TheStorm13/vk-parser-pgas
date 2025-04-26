@@ -1,7 +1,6 @@
 import re
 import pytest
 
-# Регулярное выражение на основе ФИО
 def create_pattern_v1(fio):
     surname, name, patronymic = fio.split()
     return re.compile(
@@ -13,16 +12,12 @@ def create_pattern_v1(fio):
 def create_pattern_v2(fio):
     surname, name, _ = fio.split()
 
-    # Префиксы: Автор или Текст, разделенные пробелами
     prefix = r"(Автор|Текст)\s*:?\s*"
 
-    # Формат имени (инициалы или полное имя)
     name_variations = rf"{name[0]}\.?|{name}"
 
-    # Фамилия или имя в различных вариантах
     name_and_surname = rf"({surname}\s*{name_variations}|{name_variations}\s*{surname})"
 
-    # Финальное регулярное выражение
     return re.compile(
         rf"{prefix}{name_and_surname}",
         re.IGNORECASE

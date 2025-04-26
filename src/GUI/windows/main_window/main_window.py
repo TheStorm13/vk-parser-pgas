@@ -7,28 +7,28 @@ from src.GUI.windows.main_window.form_component import FormComponent
 from src.GUI.windows.main_window.logo_component import LogoComponent
 from src.GUI.windows.main_window.progress_bar_manager import ProgressBarManager
 from src.GUI.windows.message_window.message_box import CustomMessageBox
-from src.logic.logic import MainLogic
-from src.utils.intup_validator import InputValidator
+from src.logic.post_controller import PostController
+from src.utils.data_utils import DateUtils
 
 
 class MainWindow:
     def __init__(self, root):
+        # Initialize the main components of the UI
         self.root = root
         self.main_frame = root.main_frame
         self.label_font = root.label_font
 
+        # Create and initialize
         self.form = FormComponent(self.main_frame, self.label_font)
         self.progress_manager = ProgressBarManager(self.main_frame, self.label_font)
-        self.validator = InputValidator()
-
-        self.executor = ThreadPoolExecutor(max_workers=1)  # Пул для задач
-        self.future = None  # Для отслеживания текущей задачи
-
-        # Подключение логотипа
         self.logo_component = LogoComponent(self.main_frame, "data/logo.png")
-
         self._create_buttons()
 
+        # Single-thread executor for running background tasks
+        self.executor = ThreadPoolExecutor(max_workers=1)
+        self.future = None  # Holds the future result of background tasks
+
+        # Manage UI controls' state
         self.ui_state = UIStateManager([
             self.form.entry_start_date,
             self.form.entry_end_date,
@@ -38,12 +38,11 @@ class MainWindow:
 
         ])
 
-        # Настройка авторазмера окна
+        # Initialize window geometry
         self.root.update_idletasks()
         self.root.geometry("")
 
     def create_label(self):
-        """Создает заголовок окна"""
         self.title_label = ttk.Label(
             self.main_frame,
             text="Сбор постов для ПГАС",
@@ -52,7 +51,6 @@ class MainWindow:
         self.title_label.grid(row=0, column=0, columnspan=2, pady=(0, 20))
 
     def _create_buttons(self):
-        """Создает кнопки интерфейса"""
         self.button_run_stop = ttk.Button(
             self.main_frame,
             text="Запустить",
@@ -62,19 +60,17 @@ class MainWindow:
         )
         self.button_run_stop.grid(row=7, column=0, columnspan=2, pady=10)
 
-        # Добавление кнопки для вызова окна описания
         self.description_button = ttk.Button(
             self.main_frame,
             text="Описание",
-            command=self.open_description_window,  # Привязываем метод открытия окна
+            command=self.open_description_window,
             style="Accent.TButton"
         )
         self.description_button.grid(row=8, column=0, columnspan=2, pady=10)
 
     def toggle_run_stop(self):
-        """Переключатель для кнопки между состояниями 'Запустить' и 'Остановить'"""
+        # Toggle the button between "Run" and "Stop"
         if self.button_run_stop["text"] == "Запустить":
-            # Запускаем процесс если валидация прошла успешно
             self.button_run_stop.config(text="Остановить", style="Danger.TButton")
             self.run_program()
         else:
@@ -82,13 +78,13 @@ class MainWindow:
             self.stop_program()
 
     def run_program(self):
-        """Обработчик нажатия на кнопку 'Запустить', запускает длительную операцию"""
+        # Start the main program logic as a background task
         try:
-            # Проверяем, не запущена ли уже задача
+            # Prevent concurrent execution
             if self.future and not self.future.done():
                 return
 
-            # Получение и валидация данных из формы
+            # Get user inputs
             start_date = self.form.entry_start_date.get()
             end_date = self.form.entry_end_date.get()
             full_name = self.form.entry_full_name.get()
@@ -97,32 +93,31 @@ class MainWindow:
             # end_date = "01.10.2024"
             # full_name = "Гроза Илья Валерьевич"
 
-            start_date, end_date = self.validator.validate_dates(start_date, end_date)
+            # Validate and parse dates
+            start_date, end_date = DateUtils.validate_dates(start_date, end_date)
 
-            # Отключение UI и подготовка к выполнению
+            # Disable UI elements during processing
             self.ui_state.disable_all()
 
-            # Запуск в отдельном потоке
+            # Submit the program execution to the thread pool
             self.future = self.executor.submit(
-                self._execute_program_logic,  # Функция, которая будет выполняться
-                start_date, end_date, full_name  # Аргументы для функции
+                self._execute_program_logic,  # Logic to execute
+                start_date, end_date, full_name
             )
 
+            # Add a callback to handle when the task is complete
             self.future.add_done_callback(self._on_task_complete)
 
         except Exception as e:
-            print(f"Ошибка при запуске: {str(e)}")
             self._handle_error(f"Ошибка при запуске: {str(e)}")
             self._reset_ui()
 
     def _on_task_complete(self, future):
-        """Обработчик завершения задачи"""
         self.root.after(0, self._handle_task_completion, future)
 
     def _handle_task_completion(self, future):
-        """Обрабатывает результат задачи из главного потока"""
         try:
-            future.result()  # Проверяем на наличие исключений
+            future.result()
         except InterruptedError:
             CustomMessageBox(self.root, "Информация", "Процесс остановлен")
         except Exception as e:
@@ -131,14 +126,13 @@ class MainWindow:
             self._reset_ui()
 
     def _execute_program_logic(self, start_date, end_date, full_name):
+        # Core program logic for data processing
         try:
-            # Показываем прогресс бар в основном потоке
+            # Show progress bar during processing
             self.root.after(0, self.progress_manager.show)
 
-            # Инициализация основной логики
-            main_logic = MainLogic()
+            main_logic = PostController()
 
-            # Выполнение основной логики с проверкой остановки
             main_logic.run(
                 full_name,
                 start_date,
@@ -154,16 +148,16 @@ class MainWindow:
             self.root.after(0, self._reset_ui)
 
     def _handle_error(self, error_message):
-        """Обработка ошибок с отображением сообщения"""
+        # Show error message to the user
         CustomMessageBox(self.root, "Ошибка", error_message)
         self._reset_ui()
 
     def stop_program(self):
-        """Обработчик нажатия на кнопку 'Остановить', корректно завершает задачу"""
         # todo: добавить остановку программы
+        # Stop the running program logic
         try:
             if self.future and not self.future.done():
-                self.future.cancel()
+                self.future.cancel()  # Attempt to cancel the task
                 CustomMessageBox(
                     self.root,
                     "Информация",
@@ -174,31 +168,26 @@ class MainWindow:
         finally:
             self._reset_ui()
 
-    def _validate_input(self):
-
-        return True
-
     def _update_progress(self, progress, total_progress):
-        """Обновляет прогресс на прогресс-баре"""
+        # Update the progress bar
         self.progress_manager.update(progress, total_progress)
 
     def _reset_ui(self):
-        """Сбрасывает UI к исходному состоянию"""
+        # Enable UI elements and hide the progress bar
         self.ui_state.enable_all()
         self.progress_manager.hide()
 
     def _show_success_message(self, start_date, end_date, full_name):
-        """Показывает сообщение об успешном завершении операции"""
         # todo: доработать сообщение об успехе
         CustomMessageBox(
             self.root,
             "Успешно",
-            f"Программа успешно нашла посты для {full_name} с {start_date.strftime('%d.%m.%Y')} по {end_date.strftime('%d.%m.%Y')}."
+            f"Программа успешно нашла посты для \n"
+            f"{full_name}\n"
+            f"с {start_date.strftime('%d.%m.%Y')} по {end_date.strftime('%d.%m.%Y')}."
         )
 
     def open_description_window(self):
-        """
-        Открытие окна описания.
-        """
-        description_window = DescriptionWindow(self.root)  # Создаем экземпляр окна описания
-        description_window.grab_set()  # Блокируем главное окно, пока не закроется новое
+        # Open a new window with additional description
+        description_window = DescriptionWindow(self.root)
+        description_window.grab_set()

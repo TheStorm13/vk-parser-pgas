@@ -4,56 +4,46 @@ import re
 class TextUtils:
     EMOJI_PATTERN = re.compile(
         "["
-        u"\U0001F600-\U0001F64F"  # эмодзи смайлов
-        u"\U0001F300-\U0001F5FF"  # символы и пиктограммы
-        u"\U0001F680-\U0001F6FF"  # транспорт и карты
-        u"\U0001F700-\U0001F77F"  # алхимические символы
-        u"\U0001F780-\U0001F7FF"  # геометрические фигуры
-        u"\U0001F800-\U0001F8FF"  # дополнительные символы
-        u"\U0001F900-\U0001F9FF"  # дополнительные символы
-        u"\U0001FA00-\U0001FA6F"  # шахматы
-        u"\U0001FA70-\U0001FAFF"  # символы и пиктограммы
+        u"\U0001F600-\U0001F64F"  # Emoji for smileys
+        u"\U0001F300-\U0001F5FF"  # Symbols and pictographs
+        u"\U0001F680-\U0001F6FF"  # Transport and map symbols
+        u"\U0001F700-\U0001F77F"  # Alchemical symbols
+        u"\U0001F780-\U0001F7FF"  # Geometric shapes
+        u"\U0001F800-\U0001F8FF"  # Supplemental symbols
+        u"\U0001F900-\U0001F9FF"  # Additional supplemental symbols
+        u"\U0001FA00-\U0001FA6F"  # Chess symbols
+        u"\U0001FA70-\U0001FAFF"  # Symbols and pictograms
         u"\U00002702-\U000027B0"  # Dingbats
-        u"\U000024C2-\U0001F251"
+        u"\U000024C2-\U0001F251"  # Enclosed characters
         "]+", flags=re.UNICODE)
 
     @staticmethod
     def get_post_link(owner_id, post_id):
-        # todo: добавить логирование и типизацию
-        """
-        Формирует ссылку на пост.
-        """
+        """Constructs a VK post URL using the owner's ID and the post ID."""
         return f"https://vk.com/wall{owner_id}_{post_id}"
 
     @staticmethod
     def remove_emoji(text: str, EMOJI_PATTERN=EMOJI_PATTERN):
-        # todo: добавить логирование и типизацию
-        """
-        Удаляет emoji из текста.
-        """
+        """Removes all emojis from the provided text using a predefined regex pattern."""
+
         return EMOJI_PATTERN.sub(r'', text)
 
     @staticmethod
     def extract_title(post_text: str):
-        # todo: добавить логирование и типизацию
-        """
-        Извлекает название из шапки поста (первая строка текста) и удаляет emoji.
-        """
-        lines = post_text.split('\n')
+        """Extracts the first line of the text, cleans it up, and removes emojis."""
+        lines = post_text.split('\n')  # Split text by newlines
+
         if lines:
-            title = lines[0].strip()
-            return TextUtils.remove_emoji(title)  # Удаляем emoji из названия
-        return "Без названия"
+            title = lines[0].strip()  # Use the first non-empty line as the title
+            return TextUtils.remove_emoji(title)  # Remove any emojis in the title
+
+        return "Без названия"  # Default value for empty posts
 
     @staticmethod
     def count_chars_before_pattern(post_text: str):
-        # todo: добавить логирование и типизацию
-        """
-        Считает количество символов до первого вхождения # или до конца текста, если # отсутствует.
-        :param text: Текст поста.
-        :return: Количество символов.
-        """
-        hash_index = post_text.find('#')  # Ищем индекс первого вхождения #
-        if hash_index == -1:  # Если # не найден
-            return len(post_text)  # Возвращаем длину всего текста
-        return hash_index  # Возвращаем индекс первого #
+        hash_index = post_text.find('#')  # Find first occurrence of '#'
+
+        if hash_index == -1:  # If '#' is not found
+            return len(post_text)  # Return the full length of the text
+
+        return hash_index  # Return the index of the first '#'

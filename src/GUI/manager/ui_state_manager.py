@@ -3,17 +3,16 @@ class UIStateManager:
         self.components = components
 
     def disable_all(self, exclude=None):
-        """
-        Отключает все компоненты, кроме тех, которые находятся в списке exclude.
-        :param exclude: Список компонентов, которые нужно исключить из отключения.
-        """
+        # Disables all components except those in the 'exclude' list
         if exclude is None:
             exclude = []
 
         for component in self.components:
-            if component not in exclude:  # Не отключать компоненты из exclude
+            # Do not turn off the components from exclude
+            if component not in exclude:
                 component.config(state="disabled")
 
     def enable_all(self):
+        # Enables all components
         for component in self.components:
             component.config(state="normal")

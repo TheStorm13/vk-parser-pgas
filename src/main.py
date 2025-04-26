@@ -1,6 +1,5 @@
-# main.py
-from src.GUI.modern_gui import ModernGui
+from src.GUI.post_collector_gui import PostCollectorGui
 
 if __name__ == "__main__":
-    app = ModernGui()
+    app = PostCollectorGui()
     app.mainloop()

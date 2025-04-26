@@ -1,6 +1,6 @@
 from src.model.post import Post
 from src.report.formatter.interface.report_format import ReportFormat
-from src.utils.data_utils import DataUtils
+from src.utils.data_utils import DateUtils
 
 
 class TextReportFormat(ReportFormat):
@@ -14,7 +14,7 @@ class TextReportFormat(ReportFormat):
                f"{'-' * 40}\n"
 
     def format_post(self, post: Post) -> str:
-        post_date = DataUtils.format_date(post.date)
+        post_date = DateUtils.datetime_to_string(post.date)
 
         return f"Название: {post.title}\n" \
                f"Дата: {post_date}\n" \
