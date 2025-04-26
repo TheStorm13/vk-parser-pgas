@@ -1,6 +1,7 @@
 import vk_api
 
 from src.logger.logger import setup_logger
+from src.state.state_app import StateApp
 
 logger = setup_logger(__name__)
 
@@ -10,6 +11,18 @@ class VKAPIHandler:
         # Initiate VK API session
         self.vk_session = vk_api.VkApi(token=token)
         self.vk = self.vk_session.get_api()
+
+    def extract_group_name_from_url(self, url: str) -> str:
+        if not url or not isinstance(url, str):
+            raise ValueError("URL должен быть непустой строкой!")
+
+        # Check and highlight the part after the last "/"
+        group_name = url.rstrip('/').split('/')[-1]
+
+        if not group_name:
+            raise ValueError("Не удалось извлечь имя группы из URL!")
+
+        return group_name
 
     def get_group_id(self, group_name):
         # Resolves VK group ID from its name
@@ -63,10 +76,15 @@ class VKAPIHandler:
 
         return result_posts
 
-    def get_posts(self, group_name, start_date, end_date, update_progress=None):
+    def get_posts(self, state: StateApp, update_progress=None):
+        group_url = state.vk_group_url
+        start_date = state.start_date
+        end_date = state.end_date
+
         result_posts = []
         progress = 0
 
+        group_name = self.extract_group_name_from_url(group_url)
         owner_id = self.get_group_id(group_name)
 
         posts = self.handler_posts(owner_id, start_date, end_date)

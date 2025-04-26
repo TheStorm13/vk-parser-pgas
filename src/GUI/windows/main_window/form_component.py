@@ -1,10 +1,12 @@
 from tkinter import ttk
 
 from src.GUI.manager.hotkeys_manager import HotkeysManager
+from src.utils.data_utils import DateUtils
 
 
 class FormComponent:
-    def __init__(self, parent_frame, label_font):
+    def __init__(self, parent_frame, label_font, state):
+        self.state = state
         self.frame = parent_frame
         self.label_font = label_font
         self._init_components()
@@ -14,12 +16,19 @@ class FormComponent:
         Initialize input fields for the form.
         Each field has a label, an entry, and placeholder text.
         """
-        self.entry_start_date = self._create_field(
-            "Начальная дата (дд.мм.гггг):", 1, "01.01.2024")
-        self.entry_end_date = self._create_field(
-            "Конечная дата (дд.мм.гггг):", 2, "31.12.2024")
+        start_date = DateUtils.timestamp_to_str(self.state.start_date)
+        end_date = DateUtils.timestamp_to_str(self.state.end_date)
+
+        self.entry_vk_token = self._create_field(
+            "Токен VK:", 1, self.state.vk_token)
+        self.entry_vk_group = self._create_field(
+            "Ссылка на сообщество:", 2, self.state.vk_group_url)
         self.entry_full_name = self._create_field(
-            "ФИО:", 3, "Иванов Иван Иванович")
+            "ФИО:", 3, self.state.full_name)
+        self.entry_start_date = self._create_field(
+            "Начальная дата (дд.мм.гггг):", 4, start_date)
+        self.entry_end_date = self._create_field(
+            "Конечная дата (дд.мм.гггг):", 5, end_date)
 
     def _create_field(self, label_text, row, placeholder):
         # Create and position the label

@@ -20,8 +20,8 @@ class ProgressBarManager:
         """
         Places the progress bar and label within the parent frame and hides them initially.
         """
-        self.progress.grid(row=5, column=0, columnspan=2, pady=10)
-        self.progress_label.grid(row=6, column=0, columnspan=2, pady=5)
+        self.progress.grid(row=7, column=0, columnspan=2, pady=10)
+        self.progress_label.grid(row=8, column=0, columnspan=2, pady=5)
         self.hide()  # Initially hide the progress bar
 
     def show(self):

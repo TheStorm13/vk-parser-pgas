@@ -1,4 +1,4 @@
-from config import PATH_REPORT
+from config_local import PATH_REPORT
 from src.model.post import Post
 from src.model.post_category import PostCategory
 from src.report.formatter.markdown_report_format import MarkdownReportFormat

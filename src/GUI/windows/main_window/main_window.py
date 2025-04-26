@@ -8,28 +8,38 @@ from src.GUI.windows.main_window.logo_component import LogoComponent
 from src.GUI.windows.main_window.progress_bar_manager import ProgressBarManager
 from src.GUI.windows.message_window.message_box import CustomMessageBox
 from src.logic.post_controller import PostController
+from src.state.state_app import StateApp
+from src.state.state_storage import StateStorage
 from src.utils.data_utils import DateUtils
 
 
 class MainWindow:
-    def __init__(self, root):
+    def __init__(self, root, state):
+        #todo: перенести от сюда
+
+        # Single-thread executor for running background tasks
+        self.executor = ThreadPoolExecutor(max_workers=1)
+        self.future = None  # Holds the future result of background tasks
+        self.state = state
+        self.state_storage= StateStorage(state)
+
         # Initialize the main components of the UI
         self.root = root
         self.main_frame = root.main_frame
         self.label_font = root.label_font
 
         # Create and initialize
-        self.form = FormComponent(self.main_frame, self.label_font)
+        self.form = FormComponent(self.main_frame, self.label_font,self.state)
         self.progress_manager = ProgressBarManager(self.main_frame, self.label_font)
         self.logo_component = LogoComponent(self.main_frame, "data/logo.png")
         self._create_buttons()
 
-        # Single-thread executor for running background tasks
-        self.executor = ThreadPoolExecutor(max_workers=1)
-        self.future = None  # Holds the future result of background tasks
+
 
         # Manage UI controls' state
         self.ui_state = UIStateManager([
+            self.form.entry_vk_token,
+            self.form.entry_vk_group,
             self.form.entry_start_date,
             self.form.entry_end_date,
             self.form.entry_full_name,
@@ -58,7 +68,7 @@ class MainWindow:
             style="Accent.TButton",
             takefocus=False
         )
-        self.button_run_stop.grid(row=7, column=0, columnspan=2, pady=10)
+        self.button_run_stop.grid(row=9, column=0, columnspan=2, pady=10)
 
         self.description_button = ttk.Button(
             self.main_frame,
@@ -66,7 +76,7 @@ class MainWindow:
             command=self.open_description_window,
             style="Accent.TButton"
         )
-        self.description_button.grid(row=8, column=0, columnspan=2, pady=10)
+        self.description_button.grid(row=10, column=0, columnspan=2, pady=10)
 
     def toggle_run_stop(self):
         # Toggle the button between "Run" and "Stop"
@@ -85,16 +95,22 @@ class MainWindow:
                 return
 
             # Get user inputs
+            vk_token = self.form.entry_vk_token.get()
+            vk_group_name = self.form.entry_vk_group.get()
             start_date = self.form.entry_start_date.get()
             end_date = self.form.entry_end_date.get()
             full_name = self.form.entry_full_name.get()
 
-            # start_date = "01.09.2024"
-            # end_date = "01.10.2024"
-            # full_name = "Гроза Илья Валерьевич"
-
             # Validate and parse dates
             start_date, end_date = DateUtils.validate_dates(start_date, end_date)
+
+            self.state = StateApp(
+                vk_token=vk_token,
+                vk_group_url=vk_group_name,
+                full_name=full_name,
+                start_date=start_date,
+                end_date=end_date
+            )
 
             # Disable UI elements during processing
             self.ui_state.disable_all()
@@ -102,7 +118,7 @@ class MainWindow:
             # Submit the program execution to the thread pool
             self.future = self.executor.submit(
                 self._execute_program_logic,  # Logic to execute
-                start_date, end_date, full_name
+                self.state
             )
 
             # Add a callback to handle when the task is complete
@@ -124,19 +140,18 @@ class MainWindow:
             self._handle_error(str(e))
         finally:
             self._reset_ui()
+            self.state_storage.save_state()
 
-    def _execute_program_logic(self, start_date, end_date, full_name):
+    def _execute_program_logic(self, state: StateApp):
         # Core program logic for data processing
         try:
             # Show progress bar during processing
             self.root.after(0, self.progress_manager.show)
 
-            main_logic = PostController()
+            post_controller = PostController()
 
-            main_logic.run(
-                full_name,
-                start_date,
-                end_date,
+            post_controller.run(
+                state,
                 self._update_progress
             )
 

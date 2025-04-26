@@ -1,10 +1,11 @@
 import time
 
-from config import VK_TOKEN, VK_GROUP
+from config_local import VK_TOKEN
 from src.logger.logger import setup_logger
 from src.logic.api_handlers.vk_api_handler import VKAPIHandler
 from src.logic.post_processing.post_analyzer import PostAnalyzer
 from src.report.report_creator import ReportCreator
+from src.state.state_app import StateApp
 
 logger = setup_logger(__name__)  # Initialize module-specific logger
 
@@ -13,25 +14,17 @@ class PostController:
     def __init__(self):
         pass
 
-    def run(self, fio, start_date, end_date, update_progress=None, group_name=VK_GROUP):
-        """
-        Main method to fetch, process, and generate a report on posts from VK.
-
-        Args:
-            fio: User information or identifier used by PostAnalyzer.
-            start_date: Start date for fetching VK posts.
-            end_date: End date for fetching VK posts.
-            update_progress: Optional callback to update progress status.
-            group_name: VK group from which posts are fetched. Defaults to VK_GROUP from config.
-        """
+    def run(self, state: StateApp, update_progress=None):
         try:
-            vk_handler = VKAPIHandler(VK_TOKEN)  # Handles interactions with VK API
-            post_analyzer = PostAnalyzer(fio)  # Analyzes posts specific to the given FIO
+            vk_handler = VKAPIHandler(state.vk_token)  # Handles interactions with VK API
+            post_analyzer = PostAnalyzer(state.full_name)  # Analyzes posts specific to the given FIO
             report_creator = ReportCreator()  # Generates final reports from processed data
 
             # Fetch posts from VK
             start_time = time.time()
-            posts = vk_handler.get_posts(group_name, start_date, end_date, update_progress)
+            posts = vk_handler.get_posts(
+                state,
+                update_progress)
             logger.info(f"Time to fetch posts: {(time.time() - start_time)}")
 
             # Analyze and filter posts

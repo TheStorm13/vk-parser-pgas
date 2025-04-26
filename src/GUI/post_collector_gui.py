@@ -4,13 +4,17 @@ from ttkthemes import ThemedTk
 
 from src.GUI.styles import Styles
 from src.GUI.windows.main_window.main_window import MainWindow
+from src.state import state_storage
+from src.state.state_storage import StateStorage
 
 
 class PostCollectorGui(ThemedTk):
     def __init__(self):
         super().__init__()
+        self.state_storage = StateStorage()
+        self.state = self.state_storage.load_state()
         self.title("Сбор постов для ПГАС")
-        self.geometry("500x600")
+        self.geometry("800x800")
 
         # Set a modern theme
         self.set_theme("arc")
@@ -27,7 +31,7 @@ class PostCollectorGui(ThemedTk):
         self.title_font, self.label_font, self.button_font = Styles.get_custom_fonts()
 
         # Initialize main application window
-        self.main_window = MainWindow(self)
+        self.main_window = MainWindow(self, self.state)
 
         # todo: add error processing and showing windows with them
 
