@@ -23,7 +23,7 @@ env/
 
 # Local configuration
 .env
-config.py
+config_local.py
 
 # Logs and databases
 *.log
