@@ -3,16 +3,16 @@ import logging
 import os
 from dataclasses import asdict
 
-from src.state.state_app import StateApp
+from src.core.model.state_app import StateApp
 
 logger = logging.getLogger(__name__)
 
 
 class StateStorage:
-    _DEFAULT_FILENAME = "state.json"
+    _DEFAULT_FILENAME = "manager.json"
 
     def __init__(self, state: StateApp = None):
-        self.state:StateApp = state
+        self.state: StateApp = state
         self.state_path = self._get_storage_path()
 
     @staticmethod
@@ -32,7 +32,7 @@ class StateStorage:
         Сохраняет текущее состояние в JSON-файл.
         """
         if not os.path.exists(self.state_path):
-            #todo: Это точно должно быть???
+            # todo: Это точно должно быть???
             os.makedirs(self.state_path)
 
         file_path = os.path.join(self.state_path, self._DEFAULT_FILENAME)
@@ -46,7 +46,7 @@ class StateStorage:
         """
         file_path = os.path.join(self.state_path, self._DEFAULT_FILENAME)
         if not os.path.exists(file_path):
-            logger.info("State file not found. Create new state")
+            logger.info("State file not found. Create new manager")
             return StateApp()
 
         with open(file_path, "r", encoding="utf-8") as f:

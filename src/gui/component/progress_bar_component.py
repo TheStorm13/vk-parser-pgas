@@ -1,27 +1,33 @@
 from tkinter import ttk
 
+from src.core.model.state_app import StateApp
 
-class ProgressBarManager:
-    def __init__(self, parent_frame, label_font):
-        self.frame = parent_frame
+
+class ProgressBarComponent:
+    def __init__(self, parent, state_manager):
+        self.state_manager = state_manager
+        self.state_manager.add_observer(self)
+
+        self.frame = ttk.Frame(parent, padding=10, borderwidth=1, relief="sunken")
+
         # Create a horizontal progress bar with an indeterminate mode for continuous progress
-        self.progress = ttk.Progressbar(parent_frame,
+        self.progress = ttk.Progressbar(self.frame,
                                         orient="horizontal",
                                         length=300,
                                         mode="indeterminate")
 
         # Create a label for progress description
-        self.progress_label = ttk.Label(parent_frame,
+        self.progress_label = ttk.Label(self.frame,
                                         text="Запускается",
-                                        font=label_font)
+                                        style="TLabel")
         self._setup_progress_bar()
 
     def _setup_progress_bar(self):
         """
         Places the progress bar and label within the parent frame and hides them initially.
         """
-        self.progress.grid(row=7, column=0, columnspan=2, pady=10)
-        self.progress_label.grid(row=8, column=0, columnspan=2, pady=5)
+        self.progress.grid(row=0, column=0, pady=10)
+        self.progress_label.grid(row=1, column=0, pady=5)
         self.hide()  # Initially hide the progress bar
 
     def show(self):
@@ -41,6 +47,6 @@ class ProgressBarManager:
         self.progress_label.config(text="Запускается")  # Resets the label's text
         self.progress_label.grid_remove()  # Hides label
 
-    def update(self, progress: int, total_progress: int):
+    def update(self, state: StateApp):
         # Updates the label to show progress details
-        self.progress_label.config(text=f"Обработано: {int(progress)} постов")
+        self.progress_label.config(text=f"Обработано: {int(state.progress)} постов")

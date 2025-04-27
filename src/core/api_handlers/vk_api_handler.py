@@ -1,15 +1,16 @@
 import vk_api
 
-from src.logger.logger import setup_logger
-from src.state.state_app import StateApp
+from src.core.manager.state_manager import StateManager
+from src.infrastructure.logger.logger import setup_logger
 
 logger = setup_logger(__name__)
 
 
 class VKAPIHandler:
-    def __init__(self, token):
+    def __init__(self, state_manager: StateManager):
         # Initiate VK API session
-        self.vk_session = vk_api.VkApi(token=token)
+        self.state_manager = state_manager
+        self.vk_session = vk_api.VkApi(token=state_manager.state.vk_token)
         self.vk = self.vk_session.get_api()
 
     def extract_group_name_from_url(self, url: str) -> str:
@@ -76,10 +77,11 @@ class VKAPIHandler:
 
         return result_posts
 
-    def get_posts(self, state: StateApp, update_progress=None):
-        group_url = state.vk_group_url
-        start_date = state.start_date
-        end_date = state.end_date
+    def get_posts(self):
+
+        group_url = self.state_manager.state.vk_group_url
+        start_date = self.state_manager.state.start_date
+        end_date = self.state_manager.state.end_date
 
         result_posts = []
         progress = 0
@@ -91,10 +93,8 @@ class VKAPIHandler:
 
         for post in posts:
             progress += 1
+            self.state_manager.update_state("progress", progress)
             post_date = (post['date'])
-
-            if update_progress:
-                update_progress(progress, len(posts))
 
             # Filter posts within the date range
             if start_date <= post_date <= end_date:

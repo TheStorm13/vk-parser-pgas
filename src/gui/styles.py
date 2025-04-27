@@ -1,4 +1,3 @@
-from tkinter import font as tkfont
 from tkinter import ttk
 
 
@@ -16,14 +15,20 @@ class Styles:
        """
         style = ttk.Style(root)
 
+        title_font = ("Helvetica", 16, "bold")
+        label_font = ("Helvetica", 12)
+        button_font = ("Helvetica", 12, "bold")
+
         # Configure frame styles
         style.configure("TFrame", background="white", borderwidth=0)
 
+        style.configure("Title.TLabel", background="white", font=title_font)
+
         # Configure label styles
-        style.configure("TLabel", background="white", font=("Helvetica", 12))
+        style.configure("TLabel", background="white", font=label_font)
 
         # Configure button styles
-        style.configure("TButton", font=("Helvetica", 12, "bold"))
+        style.configure("TButton", font=button_font)
 
         # Set focus mapping for custom buttons (e.g., Accent.TButton)
         style.map("Accent.TButton", focus=[("focus", "!focus", "")])
@@ -36,16 +41,3 @@ class Styles:
                                     ('focus', Styles.SELECTION_FG)])
 
         return style
-
-    @staticmethod
-    def get_custom_fonts():
-        """
-        Define and return custom fonts for use in the application.
-        :return: A tuple containing (title_font, label_font, button_font).
-        """
-
-        title_font = tkfont.Font(family="Helvetica", size=16, weight="bold")
-        label_font = tkfont.Font(family="Helvetica", size=12)
-        button_font = tkfont.Font(family="Helvetica", size=12, weight="bold")
-
-        return title_font, label_font, button_font

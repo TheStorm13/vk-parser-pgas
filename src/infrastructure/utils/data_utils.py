@@ -18,6 +18,14 @@ class DateUtils:
         return data.strftime('%d.%m.%Y')
 
     @staticmethod
+    def timestamp_to_str(date: float) -> str:
+        return datetime.fromtimestamp(date).strftime('%d.%m.%Y')
+
+    @staticmethod
+    def str_to_timestamp(date: str) -> float:
+        return datetime.strptime(date, "%d.%m.%Y").timestamp()
+
+    @staticmethod
     def validate_dates(start_date: str, end_date: str) -> tuple[float, float] | None:
         """Validate and compare two date strings. Ensure end_date is not earlier than start_date."""
         try:
@@ -39,7 +47,3 @@ class DateUtils:
     def get_days_before_date(days: int, date: datetime) -> datetime:
         future_datetime = date - timedelta(days=days)
         return future_datetime
-
-    @staticmethod
-    def timestamp_to_str(date: float) -> str:
-        return datetime.fromtimestamp(date).strftime('%d.%m.%Y')

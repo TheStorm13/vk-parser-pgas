@@ -10,6 +10,9 @@ class LogoComponent:
         self.width = width
         self.height = height
         self.logo_image = None  # Store the processed logo image
+
+        self.frame = ttk.Frame(self.parent, padding=10, borderwidth=1, relief="sunken")
+
         self._create_logo()
 
     def _create_logo(self):
@@ -26,11 +29,9 @@ class LogoComponent:
         self.logo_image = ImageTk.PhotoImage(image)
 
         # Create the label and add the image to it
-        logo_label = ttk.Label(self.parent, image=self.logo_image)
+        logo_label = ttk.Label(self.frame, image=self.logo_image)
 
         # Position the label at the bottom-right corner with padding
-        logo_label.grid(row=99, column=1, sticky="se", padx=10, pady=10)
+        logo_label.grid(row=0, column=0, padx=10, pady=10)
 
         # Disable resizing of the row and column containing the logo
-        self.parent.grid_rowconfigure(1, weight=0)
-        self.parent.grid_columnconfigure(1, weight=0)
