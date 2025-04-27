@@ -8,7 +8,7 @@ class ProgressBarComponent:
         self.state_manager = state_manager
         self.state_manager.add_observer(self)
 
-        self.frame = ttk.Frame(parent, padding=10, borderwidth=1, relief="sunken")
+        self.frame = ttk.Frame(parent, padding=5)
 
         # Create a horizontal progress bar with an indeterminate mode for continuous progress
         self.progress = ttk.Progressbar(self.frame,
@@ -34,8 +34,10 @@ class ProgressBarComponent:
         """
         Displays the progress bar and label, and starts the progress animation.
         """
+        self.frame.grid()
         self.progress.grid()  # Makes progress bar visible
         self.progress_label.grid()  # Makes label visible
+        self.progress_label.config(text="Запускается")  # Resets the label's text
         self.progress.start(20)  # Starts an indeterminate animation with 20ms interval
 
     def hide(self):
@@ -44,8 +46,8 @@ class ProgressBarComponent:
         """
         self.progress.stop()  # Stops the indeterminate animation
         self.progress.grid_remove()  # Hides progress bar
-        self.progress_label.config(text="Запускается")  # Resets the label's text
         self.progress_label.grid_remove()  # Hides label
+        self.frame.grid_remove()
 
     def update(self, state: StateApp):
         # Updates the label to show progress details

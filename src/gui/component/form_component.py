@@ -1,7 +1,6 @@
 from tkinter import ttk
 
 from src.core.manager.state_manager import StateManager
-
 from src.gui.manager.hotkeys_manager import HotkeysManager
 from src.gui.styles import Styles
 from src.infrastructure.utils.data_utils import DateUtils
@@ -13,7 +12,8 @@ class FormComponent:
         self.state_manager.add_observer(self)
 
         self.root = root
-        self.frame = ttk.Frame(self.root, padding=10, borderwidth=1, relief="sunken")
+        self.frame = ttk.Frame(self.root, padding=5)
+
         self.style = Styles.configure_styles(self.root)
         self._init_components()
 

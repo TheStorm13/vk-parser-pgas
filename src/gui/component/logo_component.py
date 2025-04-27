@@ -11,7 +11,7 @@ class LogoComponent:
         self.height = height
         self.logo_image = None  # Store the processed logo image
 
-        self.frame = ttk.Frame(self.parent, padding=10, borderwidth=1, relief="sunken")
+        self.frame = ttk.Frame(self.parent, padding=5)
 
         self._create_logo()
 

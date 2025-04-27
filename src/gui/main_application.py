@@ -1,14 +1,17 @@
 from ttkthemes import ThemedTk
 
 from src.core.manager.state_manager import StateManager
+from src.core.manager.task_manager import TaskManager
 from src.gui.styles import Styles
-from src.gui.windows.main_frame import MainFrame
+from src.gui.controller.main_frame_controller import MainFrameController
+from src.gui.windows.message_box import CustomMessageBox
 
 
 class MainApplication(ThemedTk):
     def __init__(self):
         super().__init__()
         self.state_manager = StateManager()
+        self.task_manager = TaskManager(self, self.state_manager)
 
         self.title("Сбор постов для ПГАС")
         self.geometry("800x800")
@@ -28,7 +31,7 @@ class MainApplication(ThemedTk):
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
-        self.main_frame = MainFrame(self, self.state_manager)
+        self.main_frame = MainFrameController(self, self.state_manager, self.task_manager)
 
         # todo: add error processing and showing windows with them
 
@@ -41,7 +44,11 @@ class MainApplication(ThemedTk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def on_close(self):
-        """Обрабатываем закрытие приложения (например, сохранить данные)"""
-        # todo
-        print("Сохраняем состояние перед закрытием...")
-        self.destroy()
+        try:
+            if self.task_manager.is_task_stopped():
+                self.task_manager.stop_task()
+                CustomMessageBox(self, "Информация", "Все фоновые задачи остановлены.")
+        except Exception as e:
+            print(f"Ошибка при завершении программы: {str(e)}")
+        finally:
+            self.destroy()
