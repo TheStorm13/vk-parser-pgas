@@ -1,4 +1,4 @@
-from config_local import PATH_REPORT
+from src.core.manager.state_manager import StateManager
 from src.core.model.post import Post
 from src.core.model.post_category import PostCategory
 from src.core.report.formatter.markdown_report_format import MarkdownReportFormat
@@ -9,9 +9,13 @@ from src.core.report.report_writer import ReportWriter
 
 
 class ReportCreator:
-    def generate_reports(self, posts: dict[PostCategory, list[Post]], output_path: str = PATH_REPORT):
+    def __init__(self, state_manager: StateManager):
+        self.state_manager = state_manager
+
+    def generate_reports(self, posts: dict[PostCategory, list[Post]]):
         # Initialize ReportWriter for managing file output
-        writer = ReportWriter(output_path)
+
+        writer = ReportWriter()
 
         # Iterate through each report format and generate the corresponding report
         for format_name, report_format in {

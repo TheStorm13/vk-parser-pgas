@@ -27,6 +27,7 @@ class PostAnalyzer:
                 post_model = self.post_mapper.to_post_model(post)  # Convert to Post model
                 list_of_posts.append(post_model)
 
+        self.state_manager.update_state("post_count", len(list_of_posts))
         logger.info("Posts are filtered and mapped to Post objects")
 
         # Sort posts by date in ascending order

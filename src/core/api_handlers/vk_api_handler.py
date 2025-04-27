@@ -1,15 +1,19 @@
 import vk_api
 
+from src.core.exception.task_interrupted_exception import TaskInterruptedException
 from src.core.manager.state_manager import StateManager
+from src.core.manager.task_manager import TaskManager
 from src.infrastructure.logger.logger import setup_logger
 
 logger = setup_logger(__name__)
 
 
 class VKAPIHandler:
-    def __init__(self, state_manager: StateManager):
+    def __init__(self, state_manager: StateManager, task_manager: TaskManager):
         # Initiate VK API session
         self.state_manager = state_manager
+        self.task_manager = task_manager
+
         self.vk_session = vk_api.VkApi(token=state_manager.state.vk_token)
         self.vk = self.vk_session.get_api()
 
@@ -43,6 +47,8 @@ class VKAPIHandler:
 
         while True:
             try:
+                self.task_manager.raise_if_stopped()
+
                 # Fetch posts from the VK wall
                 response = self.vk.wall.get(owner_id=owner_id,
                                             count=count,
@@ -72,6 +78,10 @@ class VKAPIHandler:
             except vk_api.exceptions.ApiError as e:
                 logger.error(f"Ошибка API: {e}")
                 break
+            except TaskInterruptedException:
+                raise TaskInterruptedException("Task was interrupted by the user.")
+            except Exception as e:
+                logger.error(f"An error occurred: {e}")
 
         logger.info("Posts are fetched")
 
@@ -92,17 +102,26 @@ class VKAPIHandler:
         posts = self.handler_posts(owner_id, start_date, end_date)
 
         for post in posts:
-            progress += 1
-            self.state_manager.update_state("progress", progress)
-            post_date = (post['date'])
+            try:
+                self.task_manager.raise_if_stopped()
 
-            # Filter posts within the date range
-            if start_date <= post_date <= end_date:
-                # Fetch comments if any are available
-                if post['comments']['count'] > 0:
-                    post['comments'] = self.vk.wall.getComments(owner_id=owner_id,
-                                                                post_id=post['id'])
-                result_posts.append(post)
+                progress += 1
+                self.state_manager.update_state("progress", progress)
+                post_date = (post['date'])
+
+                # Filter posts within the date range
+                if start_date <= post_date <= end_date:
+                    # Fetch comments if any are available
+                    if post['comments']['count'] > 0:
+                        post['comments'] = self.vk.wall.getComments(owner_id=owner_id,
+                                                                    post_id=post['id'])
+                    result_posts.append(post)
+
+            except TaskInterruptedException:
+                raise TaskInterruptedException("Task was interrupted by the user.")
+            except Exception as e:
+                logger.error(f"An error occurred: {e}")
+
 
         logger.info("Posts filtered by date")
 

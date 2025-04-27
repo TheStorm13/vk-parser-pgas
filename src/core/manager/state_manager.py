@@ -25,6 +25,7 @@ class StateManager:
 
         setattr(self.state, key, value)
 
+        self.state_storage.save_state(self.state)
         self.notify_observers()
 
     def notify_observers(self):
