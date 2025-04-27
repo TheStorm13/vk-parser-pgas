@@ -11,19 +11,22 @@ class AuthorValidator:
 
     @staticmethod
     def create_pattern(fio: str) -> re.Pattern:
-        # Create a regex pattern to match the author name in the text
-        surname, name, _ = fio.split()
+        surname, name, patronymic = fio.split()
 
-        prefix = r"(Автор|Текст)\s*:?\s*"  # Match "Author" or "Text" with optional colons/spaces
+        prefix = r"(Автор|Текст)\s*:?\s*"
 
-        name_variations = rf"{name[0]}\.?|{name}"  # Initial or full name of the author
+        # Handle full name and initial variations
+        name_variations = rf"({name[0]}\.?\s*|{name}\s*)"
+        patronymic_variations = rf"({patronymic[0]}\.?\s*|{patronymic}\s*)"
 
-        name_and_surname = rf"({surname}\s*{name_variations}|{name_variations}\s*{surname})"
+        # Pattern for both direct and reversed order
+        direct_order = rf"{surname}\s+{name_variations}({patronymic_variations})?"
+        reversed_order = rf"{name_variations}({patronymic_variations})?{surname}"
 
-        return re.compile(
-            rf"{prefix}{name_and_surname}",
-            re.IGNORECASE
-        )
+        # Combine patterns
+        pattern = rf"^{prefix}({direct_order}|{reversed_order})\s*\.?\s*$"
+
+        return re.compile(pattern, re.IGNORECASE)
 
     def check_author(self, text: str):
         # Check if the author name appears in the provided text
