@@ -5,8 +5,8 @@ from tkinter import ttk
 from markdown import markdown
 from tkhtmlview import HTMLLabel
 
-from src.GUI.styles import Styles
-from src.logger.logger import setup_logger
+from src.gui.styles import Styles
+from src.infrastructure.logger.logger import setup_logger
 
 logger = setup_logger(__name__)
 

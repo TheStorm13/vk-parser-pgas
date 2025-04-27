@@ -1,7 +1,7 @@
-from src.logic.post_processing import PostCategorizer
-from src.model.post import Post
-from src.utils.data_utils import DateUtils
-from src.utils.text_utils import TextUtils
+from src.core.model.post import Post
+from src.core.post_processing import PostCategorizer
+from src.infrastructure.utils.data_utils import DateUtils
+from src.infrastructure.utils.text_utils import TextUtils
 
 
 class PostMapper:

@@ -1,4 +1,4 @@
-from src.logger.logger import setup_logger
+from src.infrastructure.logger.logger import setup_logger
 
 logger = setup_logger(__name__)
 

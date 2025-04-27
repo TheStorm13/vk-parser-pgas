@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.model.post import Post
+from src.core.model.post import Post
 
 
 class ReportFormat(ABC):

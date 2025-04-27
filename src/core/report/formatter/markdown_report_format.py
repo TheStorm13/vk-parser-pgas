@@ -1,6 +1,6 @@
-from src.model.post import Post
-from src.report.formatter.interface.report_format import ReportFormat
-from src.utils.data_utils import DateUtils
+from src.core.model.post import Post
+from src.core.report.formatter.interface.report_format import ReportFormat
+from src.infrastructure.utils.data_utils import DateUtils
 
 
 class MarkdownReportFormat(ReportFormat):

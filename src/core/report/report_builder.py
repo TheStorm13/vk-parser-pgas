@@ -1,9 +1,9 @@
-from src.logger.logger import setup_logger
-from src.logic.post_processing import PostCategorizer
-from src.model.post import Post
-from src.model.post_category import PostCategory
-from src.report.formatter.interface.report_format import ReportFormat
-from src.utils.data_utils import DateUtils
+from src.core.model.post import Post
+from src.core.model.post_category import PostCategory
+from src.core.post_processing import PostCategorizer
+from src.core.report.formatter.interface.report_format import ReportFormat
+from src.infrastructure.logger.logger import setup_logger
+from src.infrastructure.utils.data_utils import DateUtils
 
 logger = setup_logger(__name__)
 

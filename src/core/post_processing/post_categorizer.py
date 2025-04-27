@@ -1,8 +1,8 @@
 from collections import defaultdict
 
-from src.logger.logger import setup_logger
-from src.model.post import Post
-from src.model.post_category import PostCategory
+from src.core.model.post import Post
+from src.core.model.post_category import PostCategory
+from src.infrastructure.logger.logger import setup_logger
 
 logger = setup_logger(__name__)
 

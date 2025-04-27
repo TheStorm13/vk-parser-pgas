@@ -1,11 +1,11 @@
 from config_local import PATH_REPORT
-from src.model.post import Post
-from src.model.post_category import PostCategory
-from src.report.formatter.markdown_report_format import MarkdownReportFormat
-from src.report.formatter.text_report_format import TextReportFormat
-from src.report.formatter.word_report_format import WordReportFormat
-from src.report.report_builder import ReportBuilder
-from src.report.report_writer import ReportWriter
+from src.core.model.post import Post
+from src.core.model.post_category import PostCategory
+from src.core.report.formatter.markdown_report_format import MarkdownReportFormat
+from src.core.report.formatter.text_report_format import TextReportFormat
+from src.core.report.formatter.word_report_format import WordReportFormat
+from src.core.report.report_builder import ReportBuilder
+from src.core.report.report_writer import ReportWriter
 
 
 class ReportCreator:

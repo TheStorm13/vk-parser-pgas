@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from src.model.post_category import PostCategory
-from src.utils.data_utils import DateUtils
+from src.core.model.post_category import PostCategory
+from src.infrastructure.utils.data_utils import DateUtils
 
 
 class Post:

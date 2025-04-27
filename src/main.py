@@ -1,5 +1,5 @@
-from src.GUI.post_collector_gui import PostCollectorGui
+from src.gui.main_application import MainApplication
 
 if __name__ == "__main__":
-    app = PostCollectorGui()
+    app = MainApplication()
     app.mainloop()

@@ -1,17 +1,20 @@
-from src.logger.logger import setup_logger
-from src.logic.post_processing import PostCategorizer
-from src.logic.post_processing.author_validator import AuthorValidator
-from src.mapper.post_mapper import PostMapper
-from src.model.post import Post
-from src.model.post_category import PostCategory
+from src.core.manager.state_manager import StateManager
+
+from src.core.model.post import Post
+from src.core.model.post_category import PostCategory
+from src.core.post_processing import PostCategorizer
+from src.core.post_processing.author_validator import AuthorValidator
+from src.infrastructure.logger.logger import setup_logger
+from src.infrastructure.mapper.post_mapper import PostMapper
 
 logger = setup_logger(__name__)
 
 
 class PostAnalyzer:
-    def __init__(self, fio):
+    def __init__(self, state_manager: StateManager):
         # Validator for checking if the author of a post is valid
-        self.author_validator = AuthorValidator(fio)
+        self.state_manager = state_manager
+        self.author_validator = AuthorValidator(self.state_manager.state.full_name)
         # Converts raw post data into Post model objects
         self.post_mapper = PostMapper()
 
