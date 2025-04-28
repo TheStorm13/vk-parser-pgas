@@ -14,15 +14,14 @@ class PostCategorizer:
             PostCategory(0, 400, 8, 10),
             PostCategory(400, 1200, 4, 6),
             PostCategory(1200, 2500, 2, 2),
-            PostCategory(2500, float('inf'), 1, 1)
-
+            PostCategory(2500, float("inf"), 1, 1),
         }
 
     def categorize_post(self, text_length: int) -> PostCategory:
         # Determine the category for a post based on its length
         for category in self.categories:
             # Check if post belongs to an open-ended length category
-            if category.max_length is float('inf'):
+            if category.max_length is float("inf"):
                 if text_length >= category.min_length:
                     logger.debug("Category is defined")
                     return category
@@ -45,7 +44,9 @@ class PostCategorizer:
             categorized_posts[post.category].append(post)
 
         # Sort categories by their minimum length for easier readability
-        sorted_categorized_posts = dict(sorted(categorized_posts.items(), key=lambda item: item[0].min_length))
+        sorted_categorized_posts = dict(
+            sorted(categorized_posts.items(), key=lambda item: item[0].min_length)
+        )
 
         logger.info("Posts are divided into categories")
 
@@ -54,10 +55,12 @@ class PostCategorizer:
     @staticmethod
     def calculate_points(category: PostCategory, post_count: int) -> int:
         # Calculate points based on category values and post count
-        first_part = (post_count // category.max_value)  # Full sets matching max value
-        second_part = (post_count % category.max_value) // category.min_value  # Partial sets
+        first_part = post_count // category.max_value  # Full sets matching max value
+        second_part = (
+                              post_count % category.max_value
+                      ) // category.min_value  # Partial sets
         result = first_part + second_part
 
-        logger.debug(f"Points for \"{category}\" of posts are calculated {result}")
+        logger.debug(f'Points for "{category}" of posts are calculated {result}')
 
         return result

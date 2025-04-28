@@ -23,6 +23,10 @@ class ReportCreator:
             "posts.md": MarkdownReportFormat(),  # Markdown format
             "posts_word.txt": WordReportFormat(),  # Custom word-like format
         }.items():
-            builder = ReportBuilder(report_format)  # Configure the report builder with the format
+            builder = ReportBuilder(
+                report_format
+            )  # Configure the report builder with the format
             content = builder.build_report(posts)  # Generate the report content
-            writer.write_report(format_name, content)  # Write the generated report to a file
+            writer.write_report(
+                format_name, content
+            )  # Write the generated report to a file

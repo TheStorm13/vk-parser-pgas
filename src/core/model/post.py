@@ -12,7 +12,7 @@ class Post:
             len_text: int,
             date: datetime,
             url: str,
-            category: PostCategory
+            category: PostCategory,
     ):
         self.title = title
         self.post_text = post_text
@@ -22,5 +22,7 @@ class Post:
         self.category = category
 
     def __str__(self):
-        return (f"Post(title='{self.title}', date={DateUtils.datetime_to_string(self.date)}"
-                f"url='{self.url}', category='{self.category.__str__()}', text_length={self.len_text})")
+        return (
+            f"Post(title='{self.title}', date={DateUtils.datetime_to_string(self.date)}"
+            f"url='{self.url}', category='{self.category.__str__()}', text_length={self.len_text})"
+        )

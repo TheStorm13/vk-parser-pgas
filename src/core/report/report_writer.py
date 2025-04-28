@@ -10,7 +10,9 @@ class ReportWriter:
         """
         Initialize the ReportWriter with the given output directory.
         """
-        result_path: str = os.path.join(os.getcwd(), "reports")  # Папка reports в корне приложения
+        result_path: str = os.path.join(
+            os.getcwd(), "reports"
+        )  # Папка reports в корне приложения
         os.makedirs(result_path, exist_ok=True)  # Создать папку, если она не существует
 
         self.output_dir = result_path

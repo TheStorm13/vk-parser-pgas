@@ -38,19 +38,13 @@ class DescriptionWindow(tk.Toplevel):
 
         # Render the description as HTML
         self.html_label = HTMLLabel(
-            self.main_frame,
-            html=html_content,
-            background="white",
-            width=50,
-            height=20
+            self.main_frame, html=html_content, background="white", width=50, height=20
         )
         self.html_label.grid(row=0, column=0, sticky="nsew")
 
         # Adding a vertical scrollbar tied to the HTML label
         self.scrollbar = ttk.Scrollbar(
-            self.main_frame,
-            orient="vertical",
-            command=self.html_label.yview
+            self.main_frame, orient="vertical", command=self.html_label.yview
         )
         self.scrollbar.grid(row=0, column=1, sticky="ns")
 
@@ -64,10 +58,7 @@ class DescriptionWindow(tk.Toplevel):
 
         # Button to close the window
         close_button = ttk.Button(
-            button_frame,
-            text="Закрыть",
-            command=self.destroy,
-            style="Accent.TButton"
+            button_frame, text="Закрыть", command=self.destroy, style="Accent.TButton"
         )
         close_button.grid(row=0, column=0)
 
@@ -84,7 +75,9 @@ class DescriptionWindow(tk.Toplevel):
         """
         Keep the current scroll position when the window is resized.
         """
-        current_scroll = self.html_label.yview()[0]  # Get current vertical scroll position
+        current_scroll = self.html_label.yview()[
+            0
+        ]  # Get current vertical scroll position
         self.update()
 
         # After resizing, restore the scroll position

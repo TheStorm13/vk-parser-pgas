@@ -7,17 +7,21 @@ class WordReportFormat(ReportFormat):
     def format_header(self, count_posts: int) -> str:
         return f"Всего постов: {count_posts}\n"
 
-    def format_category_header(self, category_name: str, count_posts: int, category_point: int) -> str:
-        return f"\n{category_name}\n" \
-               f"Постов в категории: {count_posts}\n" \
-               f"Количество баллов: {category_point}\n"
+    def format_category_header(
+            self, category_name: str, count_posts: int, category_point: int
+    ) -> str:
+        return (
+            f"\n{category_name}\n"
+            f"Постов в категории: {count_posts}\n"
+            f"Количество баллов: {category_point}\n"
+        )
 
     def format_post(self, post: Post) -> dict:
         # Converts a Post object into a dictionary
         return {
             "title": f"Пост «{post.title}»",
             "date": DateUtils.datetime_to_string(post.date),
-            "link": post.url
+            "link": post.url,
         }
 
     def format_category_posts(self, posts: list[Post]) -> str:

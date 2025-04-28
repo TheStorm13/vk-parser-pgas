@@ -24,18 +24,21 @@ class FormComponent:
         Initialize input fields for the form.
         Each field has a label, an entry, and placeholder text.
         """
-        end_date, full_name, start_date, vk_group_url, vk_token = self.get_data_from_state()
+        end_date, full_name, start_date, vk_group_url, vk_token = (
+            self.get_data_from_state()
+        )
 
-        self.entry_vk_token = self._create_field(
-            "Токен VK:", 1, vk_token)
+        self.entry_vk_token = self._create_field("Токен VK:", 1, vk_token)
         self.entry_vk_group = self._create_field(
-            "Ссылка на сообщество:", 2, vk_group_url)
-        self.entry_full_name = self._create_field(
-            "ФИО:", 3, full_name)
+            "Ссылка на сообщество:", 2, vk_group_url
+        )
+        self.entry_full_name = self._create_field("Фамилия имя:", 3, full_name)
         self.entry_start_date = self._create_field(
-            "Начальная дата (дд.мм.гггг):", 4, start_date)
+            "Начальная дата (дд.мм.гггг):", 4, start_date
+        )
         self.entry_end_date = self._create_field(
-            "Конечная дата (дд.мм.гггг):", 5, end_date)
+            "Конечная дата (дд.мм.гггг):", 5, end_date
+        )
 
     def get_data_from_state(self):
         vk_token = self.state_manager.state.vk_token
@@ -53,26 +56,26 @@ class FormComponent:
         # Create entry field with placeholder text
         entry = ttk.Entry(self.frame, style="TLabel")
         entry.insert(0, placeholder)  # Add placeholder text
-        entry.configure(foreground='gray')  # Make placeholder gray
+        entry.configure(foreground="gray")  # Make placeholder gray
 
         # Event: Clear placeholder on focus
         def on_focus_in(event):
             if entry.get() == placeholder:
-                entry.delete(0, 'end')  # Clear text
-                entry.configure(foreground='black')  # Restore default text color
+                entry.delete(0, "end")  # Clear text
+                entry.configure(foreground="black")  # Restore default text color
 
         # Event: Restore placeholder if field is empty
         def on_focus_out(event):
-            if entry.get() == '':
+            if entry.get() == "":
                 entry.insert(0, placeholder)  # Reinsert placeholder text
-                entry.configure(foreground='gray')  # Set placeholder color
+                entry.configure(foreground="gray")  # Set placeholder color
 
         # Register hotkey bindings for the entry field
         HotkeysManager.setup_entry_bindings(entry)
 
         # Bind focus events to the entry field
-        entry.bind('<FocusIn>', on_focus_in)
-        entry.bind('<FocusOut>', on_focus_out)
+        entry.bind("<FocusIn>", on_focus_in)
+        entry.bind("<FocusOut>", on_focus_out)
 
         # Position the entry field in the grid
         entry.grid(row=row, column=1, sticky="nsew", padx=5, pady=5)
@@ -81,7 +84,7 @@ class FormComponent:
 
     def enter_data(self):
         start_date = DateUtils.str_to_timestamp(self.entry_start_date.get())
-        end_date = DateUtils.str_to_timestamp(self.entry_end_date.get())
+        end_date = DateUtils.str_to_timestamp(self.entry_end_date.get(), is_end_of_day=True)
         self.state_manager.update_state("vk_token", self.entry_vk_token.get())
         self.state_manager.update_state("vk_group_url", self.entry_vk_group.get())
         self.state_manager.update_state("full_name", self.entry_full_name.get())
@@ -89,5 +92,5 @@ class FormComponent:
         self.state_manager.update_state("end_date", end_date)
 
     def update(self, state):
-        pass
         # todo
+        pass

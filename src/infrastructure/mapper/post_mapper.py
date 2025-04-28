@@ -19,19 +19,19 @@ class PostMapper:
             Post: Fully populated Post model object.
         """
         # Extract title from the post text
-        title = TextUtils.extract_title(post['text'])
+        title = TextUtils.extract_title(post["text"])
 
         # Fetch the raw post text
-        post_text = post['text']
+        post_text = post["text"]
 
         # Calculate the length of the text before a specific pattern (e.g., a link)
         len_text = TextUtils.count_chars_before_pattern(post_text)
 
         # Convert date from the raw format into a standard date format
-        post_date = DateUtils.timestamp_to_datetime(post['date'])
+        post_date = DateUtils.timestamp_to_datetime(post["date"])
 
         # Generate a URL for the post using its ID and author ID
-        url = TextUtils.get_post_link(post['from_id'], post['id'])
+        url = TextUtils.get_post_link(post["from_id"], post["id"])
 
         # Categorize the post based on its text length
         category = self.post_categorizer.categorize_post(len_text)

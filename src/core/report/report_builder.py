@@ -23,7 +23,9 @@ class ReportBuilder:
         # Process each category and add formatted category headers and posts
         for category, posts in result_posts.items():
             category_point = PostCategorizer.calculate_points(category, len(posts))
-            report += self.report_format.format_category_header(category.__str__(), len(posts), category_point)
+            report += self.report_format.format_category_header(
+                category.__str__(), len(posts), category_point
+            )
 
             report += self.report_format.format_category_posts(posts)
 
@@ -38,7 +40,7 @@ class ReportBuilder:
         output = f"Всего постов: {sum(len(posts) for posts in result_posts.values())}\n"
 
         for category, posts in result_posts.items():
-            output += (f"\n\n\n{category}. Постов в категории: {len(posts)}\n")
+            output += f"\n\n\n{category}. Постов в категории: {len(posts)}\n"
             output += "Название\nДата\nСсылка\n"
             title_list = ""
             post_date_list = ""

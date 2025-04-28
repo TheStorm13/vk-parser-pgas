@@ -23,8 +23,12 @@ class PostAnalyzer:
         list_of_posts = []
 
         for post in posts:
-            if self.author_validator.validate_author(post):  # Check if the author is valid
-                post_model = self.post_mapper.to_post_model(post)  # Convert to Post model
+            if self.author_validator.validate_author(
+                    post
+            ):  # Check if the author is valid
+                post_model = self.post_mapper.to_post_model(
+                    post
+                )  # Convert to Post model
                 list_of_posts.append(post_model)
 
         self.state_manager.update_state("post_count", len(list_of_posts))
