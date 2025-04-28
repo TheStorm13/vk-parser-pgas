@@ -15,15 +15,20 @@ class DateUtils:
     @staticmethod
     def datetime_to_string(data: datetime) -> str:
         """Format a datetime object as a string in the format 'DD.MM.YYYY'."""
-        return data.strftime('%d.%m.%Y')
+        return data.strftime("%d.%m.%Y")
 
     @staticmethod
     def timestamp_to_str(date: float) -> str:
-        return datetime.fromtimestamp(date).strftime('%d.%m.%Y')
+        return datetime.fromtimestamp(date).strftime("%d.%m.%Y")
 
     @staticmethod
-    def str_to_timestamp(date: str) -> float:
-        return datetime.strptime(date, "%d.%m.%Y").timestamp()
+    def str_to_timestamp(date: str, is_end_of_day: bool = False) -> float:
+        dt = datetime.strptime(date, "%d.%m.%Y")
+        if is_end_of_day:
+            dt = dt.replace(hour=23, minute=59, second=59, microsecond=999999)
+        else:
+            dt = dt.replace(hour=0, minute=0, second=0, microsecond=1)
+        return dt.timestamp()
 
     @staticmethod
     def validate_dates(start_date: str, end_date: str) -> tuple[float, float] | None:
@@ -33,7 +38,9 @@ class DateUtils:
             end_dt = datetime.strptime(end_date, "%d.%m.%Y").timestamp()
 
             if end_dt < start_dt:
-                return None  # Return None if the end date is earlier than the start date
+                return (
+                    None  # Return None if the end date is earlier than the start date
+                )
 
             return start_dt, end_dt
         except ValueError:
