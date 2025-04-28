@@ -8,7 +8,7 @@ class TextReportFormat(ReportFormat):
         return f"Всего постов: {count_posts}\n"
 
     def format_category_header(
-            self, category_name: str, count_posts: int, category_point: int
+        self, category_name: str, count_posts: int, category_point: int
     ) -> str:
         return (
             f"\n{category_name}\n"

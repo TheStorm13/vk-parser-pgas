@@ -45,36 +45,31 @@ class MainFrame:
         self.root.update_idletasks()
         self.root.geometry("")  # Automatically resize the window to fit content
 
-
     def _init_components(self):
         # Initialize the form component and place it in the layout
         self.form_component = FormComponent(self.main_frame, self.state_manager)
-        self.form_component.frame.grid(
-            row=0, column=0, sticky="new", pady=5
-        )
+        self.form_component.frame.grid(row=0, column=0, sticky="new", pady=5)
 
         # Initialize the progress bar component and place it below the form
         self.progress_component = ProgressBarComponent(
             self.main_frame, self.state_manager
         )
-        self.progress_component.frame.grid(
-            row=1, column=0, pady=5
-        )
+        self.progress_component.frame.grid(row=1, column=0, pady=5)
 
         # Initialize the button component, passing callback functions and logic
         self.buttons_component = ButtonComponent(
             self.main_frame,
             self.button_callbacks["run_program"],  # Callback for running the program
             self.button_callbacks["stop_program"],  # Callback for stopping the program
-            self.button_callbacks["open_description_window"],  # Callback for opening a description window
+            self.button_callbacks[
+                "open_description_window"
+            ],  # Callback for opening a description window
             self.state_manager.state_storage.delete_state_storage,  # Callback for deleting state storage
         )
 
         # Initialize the logo component and place it in the bottom-right corner
         self.logo_component = LogoComponent(self.main_frame, "data/logo.png")
-        self.logo_component.frame.grid(
-            row=3, column=0, sticky="ne", pady=5
-        )
+        self.logo_component.frame.grid(row=3, column=0, sticky="ne", pady=5)
 
     def reset_ui(self):
         # Reset the UI to its default state

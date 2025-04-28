@@ -6,13 +6,13 @@ from src.infrastructure.utils.data_utils import DateUtils
 
 class Post:
     def __init__(
-            self,
-            title: str,
-            post_text: str,
-            len_text: int,
-            date: datetime,
-            url: str,
-            category: PostCategory,
+        self,
+        title: str,
+        post_text: str,
+        len_text: int,
+        date: datetime,
+        url: str,
+        category: PostCategory,
     ):
         self.title = title
         self.post_text = post_text

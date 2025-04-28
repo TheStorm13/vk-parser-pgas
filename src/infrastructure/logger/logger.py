@@ -3,7 +3,7 @@ from logging.handlers import RotatingFileHandler
 
 
 def setup_logger(
-        name: str, log_file: str = "app.log", level: int = logging.INFO
+    name: str, log_file: str = "app.log", level: int = logging.INFO
 ) -> logging.Logger:
     """
     Setup and configure a logger with both console and rotating file handlers.

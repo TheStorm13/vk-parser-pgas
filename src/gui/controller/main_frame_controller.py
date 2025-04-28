@@ -83,10 +83,7 @@ class MainFrameController:
 
         except TaskInterruptedError:
             # Handle task interruption gracefully
-            self._message_window(
-                "Информация",
-                "Процесс остановлен."
-            )
+            self._message_window("Информация", "Процесс остановлен.")
         except Exception as e:
             # Notify the user of error
             self._message_window("Ошибка", f"Ошибка при запуске: {str(e)}")
@@ -95,7 +92,7 @@ class MainFrameController:
             self._message_window(
                 "Успешно",
                 f"Посты успешны проанализированы."
-                f"Найдено: {self.state_manager.state.post_count}"
+                f"Найдено: {self.state_manager.state.post_count}",
             )
         finally:
             # Reset UI after task execution (either success or failure)
@@ -111,7 +108,7 @@ class MainFrameController:
             CustomMessageBox,  # The custom message box class or function
             self.root,
             title,
-            text
+            text,
         )
 
     def open_description_window(self):

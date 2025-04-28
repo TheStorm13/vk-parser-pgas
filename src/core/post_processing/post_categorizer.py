@@ -57,8 +57,8 @@ class PostCategorizer:
         # Calculate points based on category values and post count
         first_part = post_count // category.max_value  # Full sets matching max value
         second_part = (
-                              post_count % category.max_value
-                      ) // category.min_value  # Partial sets
+            post_count % category.max_value
+        ) // category.min_value  # Partial sets
         result = first_part + second_part
 
         logger.debug(f'Points for "{category}" of posts are calculated {result}')

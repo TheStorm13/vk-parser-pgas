@@ -9,10 +9,10 @@ class Styles:
     @staticmethod
     def configure_styles(root):
         """
-       Configure global styles for ttk widgets in the application.
-       :param root: Root Tkinter widget to associate the styles with.
-       :return: Configured ttk.Style instance.
-       """
+        Configure global styles for ttk widgets in the application.
+        :param root: Root Tkinter widget to associate the styles with.
+        :return: Configured ttk.Style instance.
+        """
         style = ttk.Style(root)
 
         title_font = ("Helvetica", 16, "bold")
@@ -34,10 +34,16 @@ class Styles:
         style.map("Accent.TButton", focus=[("focus", "!focus", "")])
 
         # Configure custom Entry styling for selection (focus and non-focus states)
-        style.map('Custom.TEntry',
-                  selectbackground=[('!focus', Styles.SELECTION_BG),
-                                    ('focus', Styles.SELECTION_BG)],
-                  selectforeground=[('!focus', Styles.SELECTION_FG),
-                                    ('focus', Styles.SELECTION_FG)])
+        style.map(
+            "Custom.TEntry",
+            selectbackground=[
+                ("!focus", Styles.SELECTION_BG),
+                ("focus", Styles.SELECTION_BG),
+            ],
+            selectforeground=[
+                ("!focus", Styles.SELECTION_FG),
+                ("focus", Styles.SELECTION_FG),
+            ],
+        )
 
         return style

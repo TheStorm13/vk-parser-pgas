@@ -30,9 +30,13 @@ class TaskManager:
 
         if not self.stop_event.is_set():
             self.stop_event.clear()  # Ensure the stop_event is reset
-            self.future = self.executor.submit(func, *args, **kwargs)  # Submit task to the executor
+            self.future = self.executor.submit(
+                func, *args, **kwargs
+            )  # Submit task to the executor
         else:
-            raise RuntimeError("Task is running!")  # Prevent multiple tasks from running concurrently
+            raise RuntimeError(
+                "Task is running!"
+            )  # Prevent multiple tasks from running concurrently
 
     def stop_task(self):
         """
@@ -51,7 +55,9 @@ class TaskManager:
         if self.is_task_stopped():
             self.stop_event.clear()  # Reset the stop flag for future tasks
             logger.info("The task was interrupted by the user")  # Log the interruption
-            raise TaskInterruptedError("Задача была прервана пользователем!")  # Notify that the task was stopped
+            raise TaskInterruptedError(
+                "Задача была прервана пользователем!"
+            )  # Notify that the task was stopped
 
     def is_task_stopped(self):
         """

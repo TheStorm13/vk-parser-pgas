@@ -1,10 +1,10 @@
 class PostCategory:
     def __init__(
-            self,
-            min_length: int,
-            max_length: int = float("inf"),
-            min_value: int = None,
-            max_value: int = None,
+        self,
+        min_length: int,
+        max_length: int = float("inf"),
+        min_value: int = None,
+        max_value: int = None,
     ):
         self.min_length = min_length
         self.max_length = max_length

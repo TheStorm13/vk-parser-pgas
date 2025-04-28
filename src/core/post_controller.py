@@ -35,9 +35,7 @@ class PostController:
         self.task_manager.raise_if_stopped()
 
         start_time = time.time()
-        self.state_manager.update_state(
-            "progress", "Раскладываем посты по категориям"
-        )
+        self.state_manager.update_state("progress", "Раскладываем посты по категориям")
         filtered_posts = post_analyzer.posts_analyze(posts)
         logger.info(f"Time to process posts: {(time.time() - start_time)}")
 

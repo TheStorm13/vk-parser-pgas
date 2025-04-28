@@ -84,7 +84,9 @@ class FormComponent:
 
     def enter_data(self):
         start_date = DateUtils.str_to_timestamp(self.entry_start_date.get())
-        end_date = DateUtils.str_to_timestamp(self.entry_end_date.get(), is_end_of_day=True)
+        end_date = DateUtils.str_to_timestamp(
+            self.entry_end_date.get(), is_end_of_day=True
+        )
         self.state_manager.update_state("vk_token", self.entry_vk_token.get())
         self.state_manager.update_state("vk_group_url", self.entry_vk_group.get())
         self.state_manager.update_state("full_name", self.entry_full_name.get())

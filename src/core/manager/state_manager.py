@@ -61,9 +61,11 @@ class StateManager:
 
     def notify_observers(self):
         """
-       Notify all registered observers about the state update.
-       Each observer's `update` method will be called with the current state.
-       """
+        Notify all registered observers about the state update.
+        Each observer's `update` method will be called with the current state.
+        """
 
         for observer in self.observers:
-            observer.update(self.state)  # Call the observer's update method with the new state
+            observer.update(
+                self.state
+            )  # Call the observer's update method with the new state

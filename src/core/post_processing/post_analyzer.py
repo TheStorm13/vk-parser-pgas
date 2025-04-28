@@ -24,7 +24,7 @@ class PostAnalyzer:
 
         for post in posts:
             if self.author_validator.validate_author(
-                    post
+                post
             ):  # Check if the author is valid
                 post_model = self.post_mapper.to_post_model(
                     post

@@ -10,7 +10,7 @@ class ReportFormat(ABC):
 
     @abstractmethod
     def format_category_header(
-            self, category_name: str, count_posts: int, category_point: int
+        self, category_name: str, count_posts: int, category_point: int
     ) -> str:
         pass
 

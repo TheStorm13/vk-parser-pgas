@@ -15,7 +15,6 @@ class StateStorage:
         # Set the path where the application state will be stored
         self.state_path = self._get_storage_path()
 
-
     @staticmethod
     def _get_storage_path() -> str:
         """
