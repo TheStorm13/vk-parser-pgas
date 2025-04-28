@@ -1,6 +1,6 @@
 import vk_api
 
-from src.core.exception.task_interrupted_exception import TaskInterruptedException
+from src.core.exception.task_interrupted_error import TaskInterruptedError
 from src.core.manager.state_manager import StateManager
 from src.core.manager.task_manager import TaskManager
 from src.infrastructure.logger.logger import setup_logger
@@ -19,24 +19,31 @@ class VKAPIHandler:
 
     def extract_group_name_from_url(self, url: str) -> str:
         if not url or not isinstance(url, str):
+            logger.error("URL is empty.")
             raise ValueError("URL должен быть непустой строкой!")
 
         # Check and highlight the part after the last "/"
-        group_name = url.rstrip('/').split('/')[-1]
+        group_name = url.rstrip("/").split("/")[-1]
 
         if not group_name:
+            logger.error("Failed to extract the name of the group from the URL.")
             raise ValueError("Не удалось извлечь имя группы из URL!")
 
         return group_name
 
     def get_group_id(self, group_name):
         # Resolves VK group ID from its name
-        group_info = self.vk.utils.resolveScreenName(screen_name=group_name)
+        try:
+            group_info = self.vk.utils.resolveScreenName(screen_name=group_name)
 
-        if not group_info or group_info['type'] != 'group':
-            raise ValueError("Группа не найдена!")
+            if not group_info or group_info["type"] != "group":
+                logger.error("The community is not found.")
+                raise ValueError("Сообщество не найдена!")
 
-        return -group_info['object_id']
+            return -group_info["object_id"]
+        except vk_api.exceptions.ApiError as e:
+            logger.error(f"Ошибка API: {e}")
+            raise ValueError("Ошибка API. Проверьте VK TOKEN!")
 
     def handler_posts(self, owner_id, start_date, end_date):
         result_posts = []
@@ -45,15 +52,17 @@ class VKAPIHandler:
         offset = 0
         count = 100  # Maximum number of posts per request
 
+        self.state_manager.update_state("progress", "Стучимся в сообщество Вконтакте")
+
         while True:
             try:
                 self.task_manager.raise_if_stopped()
 
                 # Fetch posts from the VK wall
-                response = self.vk.wall.get(owner_id=owner_id,
-                                            count=count,
-                                            offset=offset)
-                posts = response['items']
+                response = self.vk.wall.get(
+                    owner_id=owner_id, count=count, offset=offset
+                )
+                posts = response["items"]
 
                 if not posts:
                     break
@@ -62,8 +71,8 @@ class VKAPIHandler:
                 offset += count
 
                 # Dates of the first and last posts
-                first_date = posts[0]['date']
-                last_date = posts[-1]['date']
+                first_date = posts[0]["date"]
+                last_date = posts[-1]["date"]
 
                 # Skip posts older than the end_date
                 if last_date > end_date:
@@ -77,11 +86,10 @@ class VKAPIHandler:
 
             except vk_api.exceptions.ApiError as e:
                 logger.error(f"Ошибка API: {e}")
-                break
-            except TaskInterruptedException:
-                raise TaskInterruptedException("Task was interrupted by the user.")
+                raise ValueError("Ошибка API. Проверьте VK TOKEN!")
             except Exception as e:
-                logger.error(f"An error occurred: {e}")
+                logger.error(e)
+                raise e
 
         logger.info("Posts are fetched")
 
@@ -106,22 +114,25 @@ class VKAPIHandler:
                 self.task_manager.raise_if_stopped()
 
                 progress += 1
-                self.state_manager.update_state("progress", progress)
-                post_date = (post['date'])
+                self.state_manager.update_state(
+                    "progress", f"Обработано: {progress} постов"
+                )
+                post_date = post["date"]
 
                 # Filter posts within the date range
                 if start_date <= post_date <= end_date:
                     # Fetch comments if any are available
-                    if post['comments']['count'] > 0:
-                        post['comments'] = self.vk.wall.getComments(owner_id=owner_id,
-                                                                    post_id=post['id'])
+                    if post["comments"]["count"] > 0:
+                        post["comments"] = self.vk.wall.getComments(
+                            owner_id=owner_id, post_id=post["id"]
+                        )
                     result_posts.append(post)
 
-            except TaskInterruptedException:
-                raise TaskInterruptedException("Task was interrupted by the user.")
+            except TaskInterruptedError:
+                raise TaskInterruptedError("Задача была прервана пользователем!")
             except Exception as e:
-                logger.error(f"An error occurred: {e}")
-
+                logger.error(e)
+                raise e
 
         logger.info("Posts filtered by date")
 

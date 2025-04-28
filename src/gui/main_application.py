@@ -2,8 +2,8 @@ from ttkthemes import ThemedTk
 
 from src.core.manager.state_manager import StateManager
 from src.core.manager.task_manager import TaskManager
-from src.gui.styles import Styles
 from src.gui.controller.main_frame_controller import MainFrameController
+from src.gui.styles import Styles
 from src.gui.windows.message_box import CustomMessageBox
 
 
@@ -20,7 +20,9 @@ class MainApplication(ThemedTk):
         self.set_theme("arc")
 
         # Configure application styles and fonts
-        self.style = Styles.configure_styles(self)  # Pass the root window to style manager
+        self.style = Styles.configure_styles(
+            self
+        )  # Pass the root window to style manager
 
         # Configure background color and remove extraneous padding
         self.configure(bg="white")
@@ -31,12 +33,12 @@ class MainApplication(ThemedTk):
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
-        self.main_frame = MainFrameController(self, self.state_manager, self.task_manager)
-
-        # todo: add error processing and showing windows with them
+        self.main_frame = MainFrameController(
+            self, self.state_manager, self.task_manager
+        )
 
         # Disable focus indicator for buttons in "Accent" style
-        # self.style.map("Accent.TButton", focus=[("focus", "!focus", "")])
+        self.style.map("Accent.TButton", focus=[("focus", "!focus", "")])
 
         # Configure grid layout for dynamic resizing
         # self.main_frame.columnconfigure(1, weight=1)
