@@ -2,3 +2,8 @@ vk_api
 ttkthemes
 markdown
 tkhtmlview
+
+# linter
+mypy
+flake8
+pylint
