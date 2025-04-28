@@ -31,13 +31,14 @@ def setup_logger(
     console_handler.setFormatter(formatter)
 
     # Setup rotating file handler for file-based logging
-    file_handler = RotatingFileHandler(
-        log_file, maxBytes=5 * 1024 * 1024, backupCount=3, encoding="utf-8"
-    )
-    file_handler.setFormatter(formatter)
+
+    # file_handler = RotatingFileHandler(
+    #     log_file, maxBytes=5 * 1024 * 1024, backupCount=3, encoding="utf-8"
+    # )
+    # file_handler.setFormatter(formatter)
 
     # Add both handlers to the logger
     logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
+    # logger.addHandler(file_handler)
 
     return logger  # Return the configured logger instance
