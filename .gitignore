@@ -8,6 +8,7 @@ dist/
 build/
 reports/
 *.egg-info/
+*.spec
 
 # Virtual environments
 venv/
@@ -24,6 +25,8 @@ env/
 # Local configuration
 .env
 config_local.py
+TODO.md
+RELEASE/RELEASE_NOTES.md
 
 # Logs and databases
 *.log

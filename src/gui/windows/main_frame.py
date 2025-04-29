@@ -66,6 +66,7 @@ class MainFrame:
             ],  # Callback for opening a description window
             self.state_manager.state_storage.delete_state_storage,  # Callback for deleting state storage
         )
+        self.buttons_component.frame.grid(row=2, column=0, pady=5)
 
         # Initialize the logo component and place it in the bottom-right corner
         self.logo_component = LogoComponent(self.main_frame, "data/logo.png")
