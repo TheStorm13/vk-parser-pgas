@@ -53,7 +53,6 @@ class AuthorValidator:
 
         # Combine patterns
         pattern = rf"(\s*{prefix}({direct_order}|{reversed_order})\s*\.?\s*)"
-        print(pattern)
 
         return re.compile(pattern, re.IGNORECASE)
 

@@ -5,6 +5,9 @@ from src.core.manager.task_manager import TaskManager
 from src.gui.controller.main_frame_controller import MainFrameController
 from src.gui.styles import Styles
 from src.gui.windows.message_box import CustomMessageBox
+from src.infrastructure.logger.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 
 class MainApplication(ThemedTk):
@@ -51,6 +54,6 @@ class MainApplication(ThemedTk):
                 self.task_manager.stop_task()
                 CustomMessageBox(self, "Информация", "Все фоновые задачи остановлены.")
         except Exception as e:
-            print(f"Ошибка при завершении программы: {str(e)}")
+            logger.error(f"Ошибка при завершении программы: {str(e)}")
         finally:
             self.destroy()

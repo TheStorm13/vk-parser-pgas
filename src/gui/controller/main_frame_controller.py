@@ -3,7 +3,7 @@ from src.core.manager.state_manager import StateManager
 from src.core.manager.task_manager import TaskManager
 from src.core.post_controller import PostController
 from src.gui.windows.description_window import DescriptionWindow
-from src.gui.windows.main_frame import MainFrame
+from src.gui.windows.main.main_frame import MainFrame
 from src.gui.windows.message_box import CustomMessageBox
 
 
