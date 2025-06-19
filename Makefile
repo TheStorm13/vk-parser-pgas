@@ -1,4 +1,4 @@
-.PHONY: mypy flake8 pylint lint
+.PHONY: mypy flake8 pylint lint pyinstaller
 
 # formater black
 black:
@@ -17,4 +17,12 @@ pylint:
 	pylint src/
 
 # Run linter and formater
-lint: black mypy flake8 pylint
+lint:
+	black mypy flake8 pylint
+
+# Build the application
+build_linux:
+	pyinstaller --onefile --windowed src/main.py --add-data "data/description_app.md:data"
+
+build_windows:
+	pyinstaller --onefile --windowed src/main.py --add-data "data;data"
