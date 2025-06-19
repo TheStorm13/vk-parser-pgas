@@ -1,5 +1,5 @@
-import os
 import tkinter as tk
+from pathlib import Path
 from tkinter import ttk
 
 from markdown import markdown
@@ -7,6 +7,7 @@ from tkhtmlview import HTMLLabel
 
 from src.gui.styles import Styles
 from src.infrastructure.logger.logger import setup_logger
+from src.infrastructure.storage.app_resources import AppResources
 
 logger = setup_logger(__name__)
 
@@ -24,9 +25,9 @@ class DescriptionWindow(tk.Toplevel):
         # Configure styles for the window (defined in external Styles module)
         self.style = Styles.configure_styles(self)
 
-        # Load the application description content
-        description_file = "data/description_app.md"
-        description = self._read_description_file(description_file)
+        # Read description file
+        resources = AppResources()
+        description = resources.read_text_file("data/description_app.md")
 
         # Convert Markdown content to HTML
         html_content = markdown(description)
@@ -83,17 +84,43 @@ class DescriptionWindow(tk.Toplevel):
         # After resizing, restore the scroll position
         self.after(10, lambda: self.html_label.yview_moveto(current_scroll))
 
-    def _read_description_file(self, file_path):
+    def read_description_file(file_path: Path) -> str:
+        """
+        Читает файл с описанием приложения.
+        Возвращает содержимое файла или строку с ошибкой, если что-то пошло не так.
 
-        if not os.path.exists(file_path):
-            logger.warning("Error: Description file not found")
-        if not os.path.isfile(file_path):
-            logger.warning("Error: The specified path is not a file")
-        if not os.access(file_path, os.R_OK):
-            logger.warning("Error: Unable to read the description file")
+        Args:
+            file_path (str | Path): Путь к файлу (строка или объект Path).
 
+        Returns:
+            str: Содержимое файла или сообщение об ошибке.
+        """
+        path = Path(file_path) if isinstance(file_path, str) else file_path
+
+        # Проверка существования и доступности файла
+        if not path.exists():
+            error_msg = f"Error: File not found - {path}"
+            logger.warning(error_msg)
+            return error_msg
+
+        if not path.is_file():
+            error_msg = f"Error: Not a file - {path}"
+            logger.warning(error_msg)
+            return error_msg
+
+        if not path.access(Path.R_OK):  # Проверка прав на чтение
+            error_msg = f"Error: No read permissions - {path}"
+            logger.warning(error_msg)
+            return error_msg
+
+        # Чтение файла
         try:
-            with open(file_path, "r", encoding="utf-8") as file:
-                return file.read()
+            return path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            error_msg = f"Error: File is not UTF-8 encoded - {path}"
+            logger.warning(error_msg)
+            return error_msg
         except Exception as e:
-            return f"Error while reading the file: {str(e)}"
+            error_msg = f"Error while reading file: {str(e)}"
+            logger.warning(error_msg)
+            return error_msg
