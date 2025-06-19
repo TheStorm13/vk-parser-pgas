@@ -3,7 +3,6 @@ from tkinter import ttk
 from src.core.manager.state_manager import StateManager
 from src.gui.component.button_component import ButtonComponent
 from src.gui.component.form_component import FormComponent
-from src.gui.component.logo_component import LogoComponent
 from src.gui.component.progress_bar_component import ProgressBarComponent
 from src.gui.manager.ui_state_manager import UIStateManager
 
@@ -68,9 +67,6 @@ class MainFrame:
         )
         self.buttons_component.frame.grid(row=2, column=0, pady=5)
 
-        # Initialize the logo component and place it in the bottom-right corner
-        self.logo_component = LogoComponent(self.main_frame, "data/logo.png")
-        self.logo_component.frame.grid(row=3, column=0, sticky="ne", pady=5)
 
     def reset_ui(self):
         # Reset the UI to its default state
