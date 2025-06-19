@@ -26,7 +26,7 @@ class WordReportFormat(ReportFormat):
 
     def format_category_posts(self, posts: list[Post]) -> str:
         # Extract individual parts of the post information
-        post_titles = [f"Пост «{post.title}»" for post in posts]
+        post_titles = [f"Пост «{post.title}»".replace('« ','«').replace('»»','»') for post in posts]
         post_dates = [f"{DateUtils.datetime_to_string(post.date)}" for post in posts]
         post_links = [f"{post.url}" for post in posts]
 
