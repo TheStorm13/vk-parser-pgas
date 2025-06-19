@@ -8,12 +8,13 @@ logger = setup_logger(__name__)
 class AuthorValidator:
     def __init__(self, full_name):
         self.full_name = full_name
-        self.pattern = self.create_pattern(full_name)
+        self.pattern_fio = self.create_pattern_fio(full_name)
+        self.pattern_fi = self.create_pattern_fi(full_name)
 
     @staticmethod
-    def create_pattern(full_name: str) -> re.Pattern:
+    def create_pattern_fi(full_name: str) -> re.Pattern:
         try:
-            surname, name = full_name.split()
+            surname, name, patronymic = full_name.split()
         except ValueError as e:
             logger.error(f"ValueError: {e}")
             raise ValueError("Неправильно введено Фамилия имя!")
@@ -32,9 +33,33 @@ class AuthorValidator:
 
         return re.compile(pattern, re.IGNORECASE)
 
+    @staticmethod
+    def create_pattern_fio(full_name: str) -> re.Pattern:
+        try:
+            surname, name, patronymic = full_name.split()
+        except ValueError as e:
+            logger.error(f"ValueError: {e}")
+            raise ValueError("Неправильно введено Фамилия имя!")
+
+        prefix = r"((Автор|Текст)\s*:?\s*)"
+
+        # Handle full name and initial variations
+        name_variations = rf"(({name[0]}\.?)|({name}))\s*"
+        patronymic_variations = rf"(({patronymic[0]}\.?)|({patronymic}))\s*"
+
+        # Pattern for both direct and reversed order
+        direct_order = rf"({surname}\s*{name_variations}({patronymic_variations})?)"
+        reversed_order = rf"({name_variations}({patronymic_variations})?{surname})"
+
+        # Combine patterns
+        pattern = rf"(\s*{prefix}({direct_order}|{reversed_order})\s*\.?\s*)"
+        print(pattern)
+
+        return re.compile(pattern, re.IGNORECASE)
+
     def check_author(self, text: str):
         # Check if the author name appears in the provided text
-        result = self.pattern.search(text)
+        result = self.pattern_fi.search(text) or self.pattern_fio.search(text)
 
         return result
 

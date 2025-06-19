@@ -11,7 +11,7 @@ class StateApp:
 
     vk_token: str = ""
     vk_group_url: str = "https://vk.com/svarog_samara"
-    full_name: str = "Иванов Иван"
+    full_name: str = "Иванов Иван Иванович"
     start_date: float = DateUtils.get_days_before_date(
         365, DateUtils.get_current_date()
     ).timestamp()

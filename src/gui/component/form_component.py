@@ -32,7 +32,7 @@ class FormComponent:
         self.entry_vk_group = self._create_field(
             "Ссылка на сообщество:", 2, vk_group_url
         )
-        self.entry_full_name = self._create_field("Фамилия имя:", 3, full_name)
+        self.entry_full_name = self._create_field("ФИО:", 3, full_name)
         self.entry_start_date = self._create_field(
             "Начальная дата (дд.мм.гггг):", 4, start_date
         )
