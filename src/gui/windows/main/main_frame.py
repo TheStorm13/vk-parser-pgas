@@ -1,9 +1,9 @@
 from tkinter import ttk
 
 from src.core.manager.state_manager import StateManager
-from src.gui.component.button_component import ButtonComponent
-from src.gui.component.form_component import FormComponent
-from src.gui.component.progress_bar_component import ProgressBarComponent
+from src.gui.windows.main.component.button_component import ButtonComponent
+from src.gui.windows.main.component.form_component import FormComponent
+from src.gui.windows.main.component.progress_bar_component import ProgressBarComponent
 from src.gui.manager.ui_state_manager import UIStateManager
 
 
@@ -39,6 +39,8 @@ class MainFrame:
                 self.buttons_component.remove_files,
             ]
         )
+        # Bind the root window to handle clicks
+        self.root.bind("<Button-1>", self._on_root_click)
 
         # Set window geometry based on current layout
         self.root.update_idletasks()
@@ -67,10 +69,16 @@ class MainFrame:
         )
         self.buttons_component.frame.grid(row=2, column=0, pady=5)
 
-
     def reset_ui(self):
         # Reset the UI to its default state
         # Enable all UI elements and hide the progress bar
         self.ui_state.enable_all()
         self.progress_component.hide()  # Hide the progress bar
         self.buttons_component.set_run_state()  # Reset the button to the "Run" state
+
+    def _on_root_click(self, event):
+        widget = event.widget
+
+        # Если клик был вне поля ввода, убираем фокус
+        if not isinstance(widget, ttk.Entry):
+            self.root.focus_set()
