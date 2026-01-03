@@ -28,7 +28,7 @@ class FormComponent:
             self.get_data_from_state()
         )
 
-        self.entry_vk_token = self._create_field("Токен VK:", 1, vk_token)
+        self.entry_vk_token = self._create_field("Сервисный ключ VK:", 1, vk_token)
         self.entry_vk_group = self._create_field(
             "Ссылка на сообщество:", 2, vk_group_url
         )
