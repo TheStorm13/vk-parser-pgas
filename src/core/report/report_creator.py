@@ -9,24 +9,34 @@ from src.core.report.report_writer import ReportWriter
 
 
 class ReportCreator:
+    """Создает отчеты в нескольких форматах."""
+
     def __init__(self, state_manager: StateManager):
+        """Инициализирует создателя отчетов.
+
+        Args:
+            state_manager: Менеджер состояния приложения.
+
+        """
         self.state_manager = state_manager
 
     def generate_reports(self, posts: dict[PostCategory, list[Post]]):
-        # Initialize ReportWriter for managing file output
+        """Генерирует отчеты и записывает файлы.
 
+        Args:
+            posts: Посты, сгруппированные по категориям.
+
+        Returns:
+            None
+
+        """
         writer = ReportWriter()
 
-        # Iterate through each report format and generate the corresponding report
         for format_name, report_format in {
-            "posts.txt": TextReportFormat(),  # Plain text format
-            "posts.md": MarkdownReportFormat(),  # Markdown format
-            "posts_word.txt": WordReportFormat(),  # Custom word-like format
+            "posts.txt": TextReportFormat(),
+            "posts.md": MarkdownReportFormat(),
+            "posts_word.txt": WordReportFormat(),
         }.items():
-            builder = ReportBuilder(
-                report_format
-            )  # Configure the report builder with the format
-            content = builder.build_report(posts)  # Generate the report content
-            writer.write_report(
-                format_name, content
-            )  # Write the generated report to a file
+            builder = ReportBuilder(report_format)
+            content = builder.build_report(posts)
+            writer.write_report(format_name, content)

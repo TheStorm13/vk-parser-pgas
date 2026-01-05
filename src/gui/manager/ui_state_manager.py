@@ -1,18 +1,41 @@
 class UIStateManager:
+    """Управляет состоянием UI-компонентов."""
+
     def __init__(self, components):
+        """Сохраняет компоненты для управления.
+
+        Args:
+            components: Список UI-компонентов.
+
+        Returns:
+            None
+
+        """
         self.components = components
 
     def disable_all(self, exclude=None):
-        # Disables all components except those in the 'exclude' list
+        """Отключает все компоненты, кроме исключений.
+
+        Args:
+            exclude: Компоненты для исключения.
+
+        Returns:
+            None
+
+        """
         if exclude is None:
             exclude = []
 
         for component in self.components:
-            # Do not turn off the components from exclude
             if component not in exclude:
                 component.config(state="disabled")
 
     def enable_all(self):
-        # Enables all components
+        """Включает все компоненты.
+
+        Returns:
+            None
+
+        """
         for component in self.components:
             component.config(state="normal")

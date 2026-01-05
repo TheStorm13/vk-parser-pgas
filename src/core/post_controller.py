@@ -7,31 +7,47 @@ from src.core.post_processing.post_analyzer import PostAnalyzer
 from src.core.report.report_creator import ReportCreator
 from src.infrastructure.logger.logger import setup_logger
 
-logger = setup_logger(__name__)  # Initialize module-specific logger
+logger = setup_logger(__name__)
 
 
 class PostController:
+    """Управляет получением, анализом и отчетами по постам."""
+
     def __init__(self, state_manager: StateManager, task_manager: TaskManager):
+        """Инициализирует контроллер постов.
+
+        Args:
+            state_manager: Менеджер состояния приложения.
+            task_manager: Менеджер фоновых задач.
+
+        """
         self.state_manager = state_manager
         self.task_manager = task_manager
 
     def run(self):
-        vk_handler = VKAPIHandler(
-            self.state_manager, self.task_manager
-        )  # Handles interactions with VK API
-        post_analyzer = PostAnalyzer(
-            self.state_manager
-        )  # Analyzes posts specific to the given full_name
-        report_creator = ReportCreator(
-            self.state_manager
-        )  # Generates final reports from processed data
+        """Запускает процесс: получает посты, анализирует и создает отчеты.
 
-        # Fetch posts from VK
+        Returns:
+            None
+
+        Raises:
+            TaskInterruptedError: При остановке задачи.
+
+        """
+        vk_handler = VKAPIHandler(
+            self.state_manager, self.task_manager,
+        )
+        post_analyzer = PostAnalyzer(
+            self.state_manager,
+        )
+        report_creator = ReportCreator(
+            self.state_manager,
+        )
+
         start_time = time.time()
         posts = vk_handler.get_posts()
         logger.info(f"Time to fetch posts: {(time.time() - start_time)}")
 
-        # Analyze and filter posts
         self.task_manager.raise_if_stopped()
 
         start_time = time.time()
@@ -40,5 +56,4 @@ class PostController:
         logger.info(f"Time to process posts: {(time.time() - start_time)}")
 
         self.task_manager.raise_if_stopped()
-        # Generate the report
         report_creator.generate_reports(filtered_posts)

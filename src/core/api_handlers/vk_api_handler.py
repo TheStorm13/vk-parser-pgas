@@ -9,8 +9,22 @@ logger = setup_logger(__name__)
 
 
 class VKAPIHandler:
+    """Инкапсулирует вызовы VK API.
+
+    Args:
+        state_manager (StateManager): Состояние приложения.
+        task_manager (TaskManager): Управление задачей.
+
+    """
+
     def __init__(self, state_manager: StateManager, task_manager: TaskManager):
-        # Initiate VK API session
+        """Создаёт клиент VK API.
+
+        Args:
+            state_manager (StateManager): Менеджер состояния.
+            task_manager (TaskManager): Менеджер задач.
+
+        """
         self.state_manager = state_manager
         self.task_manager = task_manager
 
@@ -18,11 +32,23 @@ class VKAPIHandler:
         self.vk = self.vk_session.get_api()
 
     def extract_group_name_from_url(self, url: str) -> str:
+        """Извлекает screen name сообщества из URL.
+
+        Args:
+            url (str): Полный URL сообщества.
+
+        Returns:
+            str: Имя сообщества.
+
+        Raises:
+            ValueError: Пустой URL или имя не найдено.
+
+        """
         if not url or not isinstance(url, str):
             logger.error("URL is empty.")
             raise ValueError("URL должен быть непустой строкой!")
 
-        # Check and highlight the part after the last "/"
+        # Берём часть после последнего "/"; rstrip удаляет хвостовой "/"
         group_name = url.rstrip("/").split("/")[-1]
 
         if not group_name:
@@ -31,8 +57,19 @@ class VKAPIHandler:
 
         return group_name
 
-    def get_group_id(self, group_name):
-        # Resolves VK group ID from its name
+    def get_group_id(self, group_name: str) -> int:
+        """Получает owner_id сообщества по screen name.
+
+        Args:
+            group_name (str): Имя сообщества.
+
+        Returns:
+            int: Отрицательный owner_id.
+
+        Raises:
+            ValueError: Сообщество не найдено или ошибка API.
+
+        """
         try:
             group_info = self.vk.utils.resolveScreenName(screen_name=group_name)
 
@@ -45,12 +82,27 @@ class VKAPIHandler:
             logger.error(f"Ошибка API: {e}")
             raise ValueError("Ошибка API. Проверьте VK TOKEN!")
 
-    def handler_posts(self, owner_id, start_date, end_date):
+    def handler_posts(self, owner_id: int, start_date: float, end_date: float) -> list:
+        """Запрашивает посты стены в диапазоне дат.
+
+        Args:
+            owner_id (int): ID владельца стены.
+            start_date (int | float): Начало диапазона (unix).
+            end_date (int | float): Конец диапазона (unix).
+
+        Returns:
+            list: Список постов.
+
+        Raises:
+            ValueError: Ошибка VK API.
+            Exception: Прочие ошибки запроса.
+
+        """
         result_posts = []
         total_posts = 0
 
         offset = 0
-        count = 100  # Maximum number of posts per request
+        count = 100  # Максимум постов за запрос
 
         self.state_manager.update_state("progress", "Стучимся в сообщество Вконтакте")
 
@@ -58,9 +110,8 @@ class VKAPIHandler:
             try:
                 self.task_manager.raise_if_stopped()
 
-                # Fetch posts from the VK wall
                 response = self.vk.wall.get(
-                    owner_id=owner_id, count=count, offset=offset
+                    owner_id=owner_id, count=count, offset=offset,
                 )
                 posts = response["items"]
 
@@ -70,15 +121,15 @@ class VKAPIHandler:
                 total_posts += len(posts)
                 offset += count
 
-                # Dates of the first and last posts
+                # Даты первого и последнего поста для ранней остановки
                 first_date = posts[0]["date"]
                 last_date = posts[-1]["date"]
 
-                # Skip posts older than the end_date
+                # Пропустить, если последний пост новее конца диапазона
                 if last_date > end_date:
                     continue
 
-                # Stop fetching if posts are before the start_date
+                # Остановить, если первый пост старше начала диапазона
                 if first_date < start_date:
                     break
 
@@ -95,8 +146,17 @@ class VKAPIHandler:
 
         return result_posts
 
-    def get_posts(self):
+    def get_posts(self) -> list:
+        """Возвращает посты сообщества с комментариями в диапазоне дат.
 
+        Returns:
+            list: Отфильтрованные посты.
+
+        Raises:
+            TaskInterruptedError: Задача прервана пользователем.
+            Exception: Неожиданная ошибка обработки.
+
+        """
         group_url = self.state_manager.state.vk_group_url
         start_date = self.state_manager.state.start_date
         end_date = self.state_manager.state.end_date
@@ -115,16 +175,16 @@ class VKAPIHandler:
 
                 progress += 1
                 self.state_manager.update_state(
-                    "progress", f"Обработано: {progress} постов"
+                    "progress", f"Обработано: {progress} постов",
                 )
                 post_date = post["date"]
 
-                # Filter posts within the date range
+                # Фильтровать посты строго по диапазону
                 if start_date <= post_date <= end_date:
-                    # Fetch comments if any are available
+                    # Загружать комментарии только при наличии
                     if post["comments"]["count"] > 0:
                         post["comments"] = self.vk.wall.getComments(
-                            owner_id=owner_id, post_id=post["id"]
+                            owner_id=owner_id, post_id=post["id"],
                         )
                     result_posts.append(post)
 

@@ -8,62 +8,61 @@ logger = setup_logger(__name__)
 
 
 class TaskManager:
+    """Организует выполнение и остановку фоновой задачи.
+
+    Args:
+        root: Корневой UI-элемент.
+        state_manager: Менеджер состояния.
+        max_workers (int): Количество потоков.
+
+    """
+
     def __init__(self, root, state_manager, max_workers=1):
         self.executor = ThreadPoolExecutor(max_workers=max_workers)
         self.root = root
         self.state_manager = state_manager
-        self.stop_event = Event()  # Event used for signaling task termination
-        self.future = None  # Placeholder for storing future objects
+        self.stop_event = Event()
+        self.future = None
 
     def run_task(self, func, *args, **kwargs):
-        """
-        Submit a task to the ThreadPoolExecutor if no task is currently running.
+        """Запускает задачу, если другая не выполняется.
 
         Args:
-            func (callable): The function to execute.
-            *args: Positional arguments for the function.
-            **kwargs: Keyword arguments for the function.
+            func (callable): Функция для запуска.
+            *args: Позиционные аргументы.
+            **kwargs: Именованные аргументы.
 
         Raises:
-            RuntimeError: If a task is already running.
-        """
+            RuntimeError: Задача уже выполняется.
 
+        """
         if not self.stop_event.is_set():
-            self.stop_event.clear()  # Ensure the stop_event is reset
-            self.future = self.executor.submit(
-                func, *args, **kwargs
-            )  # Submit task to the executor
+            self.stop_event.clear()
+            self.future = self.executor.submit(func, *args, **kwargs)
         else:
-            raise RuntimeError(
-                "Task is running!"
-            )  # Prevent multiple tasks from running concurrently
+            raise RuntimeError("Task is running!")
 
     def stop_task(self):
-        """
-        Signal the currently running task to stop by setting the stop_event.
-        """
+        """Сигнализирует остановку текущей задачи."""
         self.stop_event.set()
 
     def raise_if_stopped(self):
-        """
-        Raise TaskInterruptedError if the stop_event is set.
-        Clears the stop flag and logs an interruption message.
+        """Выбрасывает TaskInterruptedError при установленном флаге остановки.
 
         Raises:
-            TaskInterruptedError: If the task has been stopped.
+            TaskInterruptedError: Задача остановлена пользователем.
+
         """
         if self.is_task_stopped():
-            self.stop_event.clear()  # Reset the stop flag for future tasks
-            logger.info("The task was interrupted by the user")  # Log the interruption
-            raise TaskInterruptedError(
-                "Задача была прервана пользователем!"
-            )  # Notify that the task was stopped
+            self.stop_event.clear()
+            logger.info("The task was interrupted by the user")
+            raise TaskInterruptedError("Задача была прервана пользователем!")
 
-    def is_task_stopped(self):
-        """
-        Check if the stop_event is set, indicating the task should stop.
+    def is_task_stopped(self) -> bool:
+        """Проверяет флаг остановки задачи.
 
         Returns:
-            bool: True if the task is signaled to stop, False otherwise.
+            bool: True при установленном флаге.
+
         """
         return self.stop_event.is_set()

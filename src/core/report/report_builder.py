@@ -9,22 +9,36 @@ logger = setup_logger(__name__)
 
 
 class ReportBuilder:
+    """Собирает отчеты заданным форматом."""
+
     def __init__(self, report_format: ReportFormat):
+        """Инициализирует сборщик отчетов.
+
+        Args:
+            report_format: Экземпляр форматера (ReportFormat).
+
+        """
         self.report_format = report_format
 
     def build_report(self, result_posts: dict[PostCategory, list[Post]]) -> str:
-        """Builds a formatted report for given categorized posts."""
+        """Строит отформатированный отчет по категориям.
+
+        Args:
+            result_posts: Категории и их посты.
+
+        Returns:
+            Готовый отчет в виде строки.
+
+        """
         report = ""
 
-        # Calculate total posts and format the report header
         count_posts = sum(len(posts) for posts in result_posts.values())
         report += self.report_format.format_header(count_posts)
 
-        # Process each category and add formatted category headers and posts
         for category, posts in result_posts.items():
             category_point = PostCategorizer.calculate_points(category, len(posts))
             report += self.report_format.format_category_header(
-                category.__str__(), len(posts), category_point
+                category.__str__(), len(posts), category_point,
             )
 
             report += self.report_format.format_category_posts(posts)
@@ -33,9 +47,14 @@ class ReportBuilder:
 
     @staticmethod
     def create_word_report(result_posts: dict[PostCategory, list[Post]]) -> str:
-        """
-        Creates a simple human-readable report in plain text.
-        This report is not formatted with a specific ReportFormat instance.
+        """Создает простой текстовый отчет.
+
+        Args:
+            result_posts: Категории и их посты.
+
+        Returns:
+            Текст отчета.
+
         """
         output = f"Всего постов: {sum(len(posts) for posts in result_posts.values())}\n"
 
@@ -46,7 +65,6 @@ class ReportBuilder:
             post_date_list = ""
             post_link_list = ""
 
-            # Generate details for each post in the current category
             for post in posts:
                 title = post.title
                 post_date = DateUtils.datetime_to_string(post.date)
@@ -56,7 +74,6 @@ class ReportBuilder:
                 post_date_list += f"\n{post_date}"
                 post_link_list += f"\n{post_link}"
 
-            # Combine all lists into the output
             output += title_list + post_date_list + post_link_list
 
         return output

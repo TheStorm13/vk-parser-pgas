@@ -2,27 +2,75 @@ from datetime import datetime, timedelta
 
 
 class DateUtils:
+    """Утилиты для работы с датами и временем."""
+
     @staticmethod
     def timestamp_to_datetime(timestamp) -> datetime:
-        """Convert a UNIX timestamp to a datetime object."""
+        """Преобразует UNIX-метку в datetime.
+
+        Args:
+            timestamp (float | int): UNIX-метка времени.
+
+        Returns:
+            datetime: Объект datetime.
+
+        """
         return datetime.fromtimestamp(timestamp)
 
     @staticmethod
     def datetime_to_timestamp(date: datetime) -> float:
-        """Convert a datetime object to a UNIX timestamp."""
+        """Преобразует datetime в UNIX-метку.
+
+        Args:
+            date (datetime): Объект даты и времени.
+
+        Returns:
+            float: Метка UNIX.
+
+        """
         return date.timestamp()
 
     @staticmethod
     def datetime_to_string(data: datetime) -> str:
-        """Format a datetime object as a string in the format 'DD.MM.YYYY'."""
+        """Форматирует datetime как 'DD.MM.YYYY'.
+
+        Args:
+            data (datetime): Объект даты и времени.
+
+        Returns:
+            str: Строка в формате 'DD.MM.YYYY'.
+
+        """
         return data.strftime("%d.%m.%Y")
 
     @staticmethod
     def timestamp_to_str(date: float) -> str:
+        """Форматирует UNIX-метку как 'DD.MM.YYYY'.
+
+        Args:
+            date (float): UNIX-метка времени.
+
+        Returns:
+            str: Строка в формате 'DD.MM.YYYY'.
+
+        """
         return datetime.fromtimestamp(date).strftime("%d.%m.%Y")
 
     @staticmethod
     def str_to_timestamp(date: str, is_end_of_day: bool = False) -> float:
+        """Преобразует дату 'DD.MM.YYYY' в UNIX-метку.
+
+        Args:
+            date (str): Дата в формате 'DD.MM.YYYY'.
+            is_end_of_day (bool): Установить конец суток.
+
+        Returns:
+            float: Метка UNIX.
+
+        Raises:
+            ValueError: Неверный формат даты.
+
+        """
         dt = datetime.strptime(date, "%d.%m.%Y")
         if is_end_of_day:
             dt = dt.replace(hour=23, minute=59, second=59, microsecond=999999)
@@ -32,25 +80,48 @@ class DateUtils:
 
     @staticmethod
     def validate_dates(start_date: str, end_date: str) -> tuple[float, float] | None:
-        """Validate and compare two date strings. Ensure end_date is not earlier than start_date."""
+        """Проверяет и сравнивает две даты.
+
+        Args:
+            start_date (str): Дата начала 'DD.MM.YYYY'.
+            end_date (str): Дата конца 'DD.MM.YYYY'.
+
+        Returns:
+            tuple[float, float] | None: Метки начала и конца или None.
+
+        """
         try:
             start_dt = datetime.strptime(start_date, "%d.%m.%Y").timestamp()
             end_dt = datetime.strptime(end_date, "%d.%m.%Y").timestamp()
 
             if end_dt < start_dt:
-                return (
-                    None  # Return None if the end date is earlier than the start date
-                )
+                return None
 
             return start_dt, end_dt
         except ValueError:
-            return None  # Return None for invalid date format inputs
+            return None
 
     @staticmethod
     def get_current_date() -> datetime:
+        """Возвращает текущую дату и время.
+
+        Returns:
+            datetime: Текущие дата и время.
+
+        """
         return datetime.now()
 
     @staticmethod
     def get_days_before_date(days: int, date: datetime) -> datetime:
+        """Возвращает дату на N дней раньше.
+
+        Args:
+            days (int): Количество дней.
+            date (datetime): Базовая дата.
+
+        Returns:
+            datetime: Итоговая дата.
+
+        """
         future_datetime = date - timedelta(days=days)
         return future_datetime

@@ -1,5 +1,4 @@
 import re
-from pickle import FALSE
 
 import pytest
 
@@ -9,7 +8,7 @@ def create_pattern_v1(full_name):
     return re.compile(
         rf"Текст:\s*{surname}\s*{name[0]}(\.\s*{patronymic[0]}\.?|{name[1:]})?|"
         rf"Текст:\s*{name[0]}(\.\s*{patronymic[0]}\.?|{name[1:]})?\s*{surname}",
-        re.IGNORECASE
+        re.IGNORECASE,
     )
 
 
@@ -96,7 +95,7 @@ def create_pattern_v4(full_name):
     ("Something else entirely", False),  # Unrelated text
     ("Текст: Гроза-Илья", False),  # Hyphenated name
     ("Текст: Гроза И-В.", False),  # Hyphenated initials
-    ("", False)  # Empty string
+    ("", False),  # Empty string
 ])
 def test_pattern_matching(text, expected):
     full_name = "Гроза Илья"  # Define full name for testing

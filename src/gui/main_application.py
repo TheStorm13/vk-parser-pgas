@@ -11,49 +11,49 @@ logger = setup_logger(__name__)
 
 
 class MainApplication(ThemedTk):
+    """Запускает главное окно приложения."""
+
     def __init__(self):
+        """Инициализирует окно, менеджеры и контроллеры.
+
+        Returns:
+            None
+
+        """
         super().__init__()
         self.state_manager = StateManager()
         self.task_manager = TaskManager(self, self.state_manager)
 
         self.title("Сбор постов для ПГАС")
         self.geometry("800x800")
-
-        # Set a modern theme
         self.set_theme("arc")
 
-        # Configure application styles and fonts
-        self.style = Styles.configure_styles(
-            self
-        )  # Pass the root window to style manager
-
-        # Configure background color and remove extraneous padding
+        self.style = Styles.configure_styles(self)
         self.configure(bg="white")
-        # self.main_frame = MainFrame(self, self.manager)  # Frame for content, with minimal padding
-        # self.main_frame.pack(fill="both", expand=True)
 
-        # Initialize main application window
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
         self.main_frame = MainFrameController(
-            self, self.state_manager, self.task_manager
+            self, self.state_manager, self.task_manager,
         )
 
-        # Disable focus indicator for buttons in "Accent" style
         self.style.map("Accent.TButton", focus=[("focus", "!focus", "")])
-
-        # Configure grid layout for dynamic resizing
-        # self.main_frame.columnconfigure(1, weight=1)
 
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def on_close(self):
+        """Завершает приложение и останавливает задачи.
+
+        Returns:
+            None
+
+        """
         try:
             if self.task_manager.is_task_stopped():
                 self.task_manager.stop_task()
                 CustomMessageBox(self, "Информация", "Все фоновые задачи остановлены.")
         except Exception as e:
-            logger.error(f"Ошибка при завершении программы: {str(e)}")
+            logger.error(f"Ошибка при завершении программы: {e!s}")
         finally:
             self.destroy()

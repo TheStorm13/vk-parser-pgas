@@ -4,6 +4,4 @@ markdown
 tkhtmlview
 
 # linter
-mypy
-flake8
-pylint
+pre-commit

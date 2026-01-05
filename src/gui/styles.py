@@ -2,16 +2,21 @@ from tkinter import ttk
 
 
 class Styles:
-    # Colors for consistent styling
-    SELECTION_BG = "#0078D7"  # Selection background color (blue)
-    SELECTION_FG = "white"  # Selection foreground color (text)
+    """Хранит и настраивает стили ttk."""
+
+    SELECTION_BG = "#0078D7"
+    SELECTION_FG = "white"
 
     @staticmethod
     def configure_styles(root):
-        """
-        Configure global styles for ttk widgets in the application.
-        :param root: Root Tkinter widget to associate the styles with.
-        :return: Configured ttk.Style instance.
+        """Настраивает глобальные стили ttk.
+
+        Args:
+            root: Корневой виджет Tk.
+
+        Returns:
+            Экземпляр ttk.Style.
+
         """
         style = ttk.Style(root)
 
@@ -19,21 +24,13 @@ class Styles:
         label_font = ("Helvetica", 12)
         button_font = ("Helvetica", 12, "bold")
 
-        # Configure frame styles
         style.configure("TFrame", background="white", borderwidth=0)
-
         style.configure("Title.TLabel", background="white", font=title_font)
-
-        # Configure label styles
         style.configure("TLabel", background="white", font=label_font)
-
-        # Configure button styles
         style.configure("TButton", font=button_font)
 
-        # Set focus mapping for custom buttons (e.g., Accent.TButton)
         style.map("Accent.TButton", focus=[("focus", "!focus", "")])
 
-        # Configure custom Entry styling for selection (focus and non-focus states)
         style.map(
             "Custom.TEntry",
             selectbackground=[
